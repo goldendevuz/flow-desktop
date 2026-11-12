@@ -49,7 +49,11 @@ export function sortSubscriptions<T extends Pick<SubscribedChannel, "id" | "name
   if (mode === "subs_asc") return [...channels].sort(byNumber(subscribers, 1));
   if (mode === "videos_desc" || mode === "videos_asc") {
     const videos = (channel: T) => parseCount(details[channel.id]?.videoCountText);
-    return [...channels].sort(byNumber(videos, mode === "videos_desc" ? -1 : 1));
+    const direction = mode === "videos_desc" ? -1 : 1;
+    const byVideos = byNumber(videos, direction);
+    const bySubscribers = byNumber(subscribers, -1);
+    // Equal video counts: the channel with more subscribers comes first.
+    return [...channels].sort((a, b) => (videos(a) === videos(b) ? bySubscribers(a, b) : byVideos(a, b)));
   }
   if (mode === "added_new") return [...channels].sort(byNumber((channel) => channel.subscribedAt ?? null, -1));
   if (mode === "added_old") return [...channels].sort(byNumber((channel) => channel.subscribedAt ?? null, 1));
