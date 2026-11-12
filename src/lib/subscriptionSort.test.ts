@@ -70,6 +70,17 @@ describe("sortSubscriptions by numbers", () => {
     expect(sortSubscriptions(list, "videos_asc", [], details).map((c) => c.id)).toEqual(["a", "b", "c"]);
   });
 
+  it("breaks a video count tie by subscribers", () => {
+    const tied = [
+      { id: "x", name: "X", subscriberCountText: "5K" },
+      { id: "y", name: "Y", subscriberCountText: "9M" },
+      { id: "z", name: "Z", subscriberCountText: "70K" },
+    ];
+    const details = { x: { videoCountText: "1 video" }, y: { videoCountText: "1 video" }, z: { videoCountText: "1 video" } } as never;
+    expect(sortSubscriptions(tied, "videos_asc", [], details).map((c) => c.id)).toEqual(["y", "z", "x"]);
+    expect(sortSubscriptions(tied, "videos_desc", [], details).map((c) => c.id)).toEqual(["y", "z", "x"]);
+  });
+
   it("orders by when the channel was subscribed", () => {
     expect(sortSubscriptions(list, "added_new", []).map((c) => c.id)).toEqual(["b", "a", "c"]);
     expect(sortSubscriptions(list, "added_old", []).map((c) => c.id)).toEqual(["c", "a", "b"]);
