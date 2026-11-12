@@ -8,6 +8,7 @@ pub mod rss;
 
 use std::collections::{HashMap, HashSet};
 use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::OnceLock;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use crate::api::innertube::extractors::channel::VIDEOS_TAB_PARAMS;
@@ -16,10 +17,26 @@ use crate::commands::youtube::populate_video_durations;
 use crate::models::channel::ChannelItem;
 use crate::models::video::VideoSummary;
 use crate::services::youtube_service::YoutubeService;
+use tokio::sync::Semaphore;
 
 const RSS_CONCURRENCY: usize = 16;
 /// Each fallback is a full channel browse, so few run at once.
 const FALLBACK_CONCURRENCY: usize = 3;
+/// Feed loads can overlap (the subscriptions page, the home feed, notifications), and each one
+/// has its own limit above. These cap what is in flight across all of them, so a big
+/// subscription list cannot saturate the connection or trip YouTube's rate limit.
+const GLOBAL_RSS_REQUESTS: usize = 8;
+const GLOBAL_FALLBACK_REQUESTS: usize = 3;
+
+fn rss_permits() -> &'static Semaphore {
+    static PERMITS: OnceLock<Semaphore> = OnceLock::new();
+    PERMITS.get_or_init(|| Semaphore::new(GLOBAL_RSS_REQUESTS))
+}
+
+fn fallback_permits() -> &'static Semaphore {
+    static PERMITS: OnceLock<Semaphore> = OnceLock::new();
+    PERMITS.get_or_init(|| Semaphore::new(GLOBAL_FALLBACK_REQUESTS))
+}
 const FALLBACK_JITTER_MS: u64 = 300;
 /// The newest uploads get their length looked up; the rest stay without one.
 const DURATION_FILL: usize = 100;
@@ -130,6 +147,7 @@ pub async fn fetch_channels(yt: &YoutubeService, channel_ids: &[String]) -> Chan
         channel_ids.iter().cloned(),
         RSS_CONCURRENCY,
         |channel_id| async move {
+            let _permit = rss_permits().acquire().await.ok();
             let parsed = rss::fetch_rss(client, &channel_id)
                 .await
                 .map(|xml| rss::parse_rss_feed(&channel_id, &xml));
@@ -164,6 +182,7 @@ pub async fn fetch_channels(yt: &YoutubeService, channel_ids: &[String]) -> Chan
 
     let fallbacks =
         crate::api::http::bounded_join(unread, FALLBACK_CONCURRENCY, |channel_id| async move {
+            let _permit = fallback_permits().acquire().await.ok();
             let found = videos_tab(yt, &channel_id).await;
             (channel_id, found)
         })
