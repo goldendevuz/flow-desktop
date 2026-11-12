@@ -56,6 +56,11 @@ export function SubscriptionsManage({
               { value: "", label: getString("subscriptions_sort_default") },
               { value: "name", label: getString("subscriptions_sort_name") },
               { value: "recent", label: getString("subscriptions_sort_recent") },
+              { value: "subs_desc", label: getString("subscriptions_sort_subs_desc") },
+              { value: "subs_asc", label: getString("subscriptions_sort_subs_asc") },
+              { value: "videos_desc", label: getString("subscriptions_sort_videos_desc") },
+              { value: "added_new", label: getString("subscriptions_sort_added_new") },
+              { value: "added_old", label: getString("subscriptions_sort_added_old") },
             ]}
           />
         </div>

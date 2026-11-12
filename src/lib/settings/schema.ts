@@ -759,7 +759,7 @@ export const SETTING_DEFINITIONS = [
   bool(SETTINGS.CATEGORIES_NAV_TAB_ENABLED, "content", true, "wired"),
   bool(SETTINGS.SUBSCRIPTION_REFRESH_ON_STARTUP, "content", false, "wired"),
   bool(SETTINGS.SUBSCRIPTION_COLLABORATIONS_ENABLED, "content", true, "wired"),
-  str(SETTINGS.SUBS_SORT_MODE, "content", "", "wired", ["", "name", "recent"]),
+  str(SETTINGS.SUBS_SORT_MODE, "content", "", "wired", ["", "name", "recent", "subs_desc", "subs_asc", "videos_desc", "added_new", "added_old"]),
   bool(SETTINGS.SUBS_SHOW_CHECKED_VIDEO_COUNT, "content", true, "wired"),
   bool(SETTINGS.SUBSCRIPTION_SHOW_VIDEOS, "content", true, "wired"),
   bool(SETTINGS.SUBSCRIPTION_SHOW_SHORTS, "content", true, "wired"),
