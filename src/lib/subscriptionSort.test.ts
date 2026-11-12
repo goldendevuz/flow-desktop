@@ -67,6 +67,7 @@ describe("sortSubscriptions by numbers", () => {
   it("orders by video count", () => {
     const details = { a: { videoCountText: "20 videos" }, b: { videoCountText: "1,500 videos" } } as never;
     expect(sortSubscriptions(list, "videos_desc", [], details).map((c) => c.id)).toEqual(["b", "a", "c"]);
+    expect(sortSubscriptions(list, "videos_asc", [], details).map((c) => c.id)).toEqual(["a", "b", "c"]);
   });
 
   it("orders by when the channel was subscribed", () => {

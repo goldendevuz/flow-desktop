@@ -8,6 +8,7 @@ export type SubscriptionSortMode =
   | "subs_desc"
   | "subs_asc"
   | "videos_desc"
+  | "videos_asc"
   | "added_new"
   | "added_old";
 
@@ -46,8 +47,9 @@ export function sortSubscriptions<T extends Pick<SubscribedChannel, "id" | "name
     details[channel.id]?.subscriberCount ?? parseCount(details[channel.id]?.subscriberCountText ?? channel.subscriberCountText);
   if (mode === "subs_desc") return [...channels].sort(byNumber(subscribers, -1));
   if (mode === "subs_asc") return [...channels].sort(byNumber(subscribers, 1));
-  if (mode === "videos_desc") {
-    return [...channels].sort(byNumber((channel) => parseCount(details[channel.id]?.videoCountText), -1));
+  if (mode === "videos_desc" || mode === "videos_asc") {
+    const videos = (channel: T) => parseCount(details[channel.id]?.videoCountText);
+    return [...channels].sort(byNumber(videos, mode === "videos_desc" ? -1 : 1));
   }
   if (mode === "added_new") return [...channels].sort(byNumber((channel) => channel.subscribedAt ?? null, -1));
   if (mode === "added_old") return [...channels].sort(byNumber((channel) => channel.subscribedAt ?? null, 1));

@@ -7,6 +7,7 @@ import type { ChannelDetails } from "../../types/video";
 import { Button } from "../ui/Button";
 import { Chip } from "../ui/Chip";
 import { FilterSelect } from "../ui/FilterSelect";
+import { joinIsolated } from "../../lib/direction";
 import { ChannelAvatarImage, getAvatarUrl } from "./ChannelAvatarImage";
 
 interface SubscriptionsManageProps {
@@ -59,6 +60,7 @@ export function SubscriptionsManage({
               { value: "subs_desc", label: getString("subscriptions_sort_subs_desc") },
               { value: "subs_asc", label: getString("subscriptions_sort_subs_asc") },
               { value: "videos_desc", label: getString("subscriptions_sort_videos_desc") },
+              { value: "videos_asc", label: getString("subscriptions_sort_videos_asc") },
               { value: "added_new", label: getString("subscriptions_sort_added_new") },
               { value: "added_old", label: getString("subscriptions_sort_added_old") },
             ]}
@@ -92,7 +94,10 @@ export function SubscriptionsManage({
                 >
                   <div dir="auto" className="line-clamp-1 text-sm font-medium text-chrome-neutral-100">{channel.name}</div>
                   <div className="line-clamp-1 text-xs text-chrome-neutral-400">
-                    {channel.subscriberCountText || details?.subscriberCountText || getString("subscriptions_subscribers_unavailable")}
+                    {joinIsolated([
+                      channel.subscriberCountText || details?.subscriberCountText || getString("subscriptions_subscribers_unavailable"),
+                      details?.videoCountText,
+                    ])}
                   </div>
                 </button>
 

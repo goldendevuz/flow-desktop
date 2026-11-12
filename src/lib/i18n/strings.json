@@ -26,6 +26,7 @@
   "subscriptions_sort_subs_desc": "Subscribers (most)",
   "subscriptions_sort_subs_asc": "Subscribers (fewest)",
   "subscriptions_sort_videos_desc": "Video count (most)",
+  "subscriptions_sort_videos_asc": "Video count (fewest)",
   "subscriptions_sort_added_new": "Subscribed (newest)",
   "subscriptions_sort_added_old": "Subscribed (oldest)",
   "subscriptions_kind_videos": "Videos",
