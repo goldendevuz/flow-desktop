@@ -213,12 +213,12 @@ export const Subscriptions: React.FC<SubscriptionsProps> = ({ onPlay, onAddToQue
 
   const [sortMode, setSortMode] = usePreference(SETTINGS.SUBS_SORT_MODE);
   const sortedFeedChannels = useMemo(
-    () => sortSubscriptions(feedChannels, sortMode as SubscriptionSortMode, videos),
-    [feedChannels, sortMode, videos],
+    () => sortSubscriptions(feedChannels, sortMode as SubscriptionSortMode, videos, channelDetails),
+    [feedChannels, sortMode, videos, channelDetails],
   );
   const sortedManageChannels = useMemo(
-    () => sortSubscriptions(visibleChannels, sortMode as SubscriptionSortMode, videos),
-    [visibleChannels, sortMode, videos],
+    () => sortSubscriptions(visibleChannels, sortMode as SubscriptionSortMode, videos, channelDetails),
+    [visibleChannels, sortMode, videos, channelDetails],
   );
 
   const channelsWithNewVideos = useMemo(() => {
