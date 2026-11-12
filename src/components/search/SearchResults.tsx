@@ -12,6 +12,7 @@ import { SearchCorrectionLine } from './SearchCorrectionLine';
 import { SearchCreatorCard } from './SearchCreatorCard';
 import { ChannelShortsGrid } from '../channel/ChannelGrids';
 import { Button } from '../ui/Button';
+import { SubscribeButton } from '../ui/SubscribeButton';
 import { useMusicPlayerStore } from '../../store/useMusicPlayerStore';
 import { useMusicHiddenFilter } from '../../store/useMusicActionsStore';
 import { useInfiniteScroll } from '../../lib/useInfiniteScroll';
@@ -599,18 +600,30 @@ function TopResultHero({
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <h2 dir="auto" className="line-clamp-2 text-2xl font-bold tracking-tight text-chrome-neutral-100">{title}</h2>
           {subtitle && <span dir="auto" className="line-clamp-1 text-sm text-chrome-neutral-400">{subtitle}</span>}
-          <Button
-            variant="primary"
-            size="sm"
-            className="mt-2 w-fit"
-            onClick={(e) => {
-              e.stopPropagation();
-              action();
-            }}
-          >
-            {isPlay && <Play className="h-4 w-4" fill="currentColor" />}
-            {actionLabel}
-          </Button>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-fit"
+              onClick={(e) => {
+                e.stopPropagation();
+                action();
+              }}
+            >
+              {isPlay && <Play className="h-4 w-4" fill="currentColor" />}
+              {actionLabel}
+            </Button>
+            {top.kind === 'channel' && (
+              <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                <SubscribeButton
+                  channelId={top.item.channelId}
+                  channelName={top.item.name}
+                  avatarUrl={top.item.avatarUrl ?? undefined}
+                  size="sm"
+                />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </section>
