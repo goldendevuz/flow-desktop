@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useExitGhost } from "../../lib/useExitGhost";
+import { APP_TITLEBAR_HEIGHT } from "../../lib/platform";
 
 export interface MenuAnchor {
   top: number;
@@ -47,16 +48,30 @@ export function AnchoredPortalMenu({
     let left = anchor.right != null ? anchor.right - width : anchor.left ?? 0;
     left = Math.max(VIEWPORT_MARGIN, Math.min(left, vw - width - VIEWPORT_MARGIN));
 
+    // The custom title bar sits above the page, so a menu cannot use the strip it covers.
+    const topLimit = APP_TITLEBAR_HEIGHT + VIEWPORT_MARGIN;
+    const available = vh - topLimit - VIEWPORT_MARGIN;
+    const tooTall = height > available;
+
     let top = anchor.top;
     if (top + height > vh - VIEWPORT_MARGIN) {
-      top = Math.max(VIEWPORT_MARGIN, (anchor.flipBottom ?? top) - height);
+      top = Math.max(topLimit, (anchor.flipBottom ?? top) - height);
     }
-    top = Math.max(VIEWPORT_MARGIN, Math.min(top, vh - height - VIEWPORT_MARGIN));
+    top = Math.max(topLimit, Math.min(top, vh - height - VIEWPORT_MARGIN));
+    if (tooTall) top = topLimit;
 
     // Grows from the corner nearest the button: the side it was anchored by, and above when flipped.
     const vertical = top < anchor.top ? "bottom" : "top";
     const horizontal = anchor.right != null ? "right" : "left";
-    setStyle({ position: "fixed", top, left, visibility: "visible", transformOrigin: `${vertical} ${horizontal}` });
+    setStyle({
+      position: "fixed",
+      top,
+      left,
+      visibility: "visible",
+      transformOrigin: `${vertical} ${horizontal}`,
+      // A menu taller than the window scrolls instead of running off its top or bottom.
+      ...(tooTall ? { maxHeight: available, overflowY: "auto" as const } : {}),
+    });
   }, [anchor.top, anchor.left, anchor.right, anchor.flipBottom]);
 
   useExitGhost(ref);
