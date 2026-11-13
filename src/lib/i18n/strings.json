@@ -1454,6 +1454,8 @@
   "settings_home_subscriptions": "Subscriptions on Home",
   "settings_home_subscriptions_desc": "Mix videos from channels you follow into Home",
   "settings_home_pin_fresh_subs": "Pin fresh uploads from subscriptions",
+  "settings_home_hide_music_videos": "Hide music videos",
+  "settings_home_hide_music_videos_desc": "Keep music videos, lyric videos and song uploads off Home. A best guess from titles and channel names, so a song with a plain title can still slip through.",
   "settings_home_pin_fresh_subs_desc": "Put the newest uploads of channels you follow at the top of Home. Off: they rank like everything else.",
   "settings_home_refresh_on_reselect": "Refresh Home when reselected",
   "settings_home_refresh_on_reselect_desc": "Click Home again at the top to reload it",
