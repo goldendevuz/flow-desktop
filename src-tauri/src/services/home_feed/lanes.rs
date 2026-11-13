@@ -213,7 +213,12 @@ pub async fn build(
         &subs_by_recency,
         inputs,
         recently_shown,
-        dynamic_fresh_sub_slots(subs.len()),
+        // With pinning off, no upload is held back for the top: subscriptions compete on rank.
+        if inputs.pin_fresh_subs {
+            dynamic_fresh_sub_slots(subs.len())
+        } else {
+            0
+        },
         now_ms,
     );
     let fresh_ids: HashSet<&str> = shown_fresh

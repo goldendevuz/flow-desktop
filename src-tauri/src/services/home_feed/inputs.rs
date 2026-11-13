@@ -30,10 +30,22 @@ const MAX_VIDEO_AGE_SETTING: &str = "home_max_video_age";
 const HIDE_SEEN_SETTING: &str = "hide_seen_videos";
 /// Settings → Content, "Subscriptions on Home".
 const SUBSCRIPTIONS_ON_HOME_SETTING: &str = "home_subscriptions_enabled";
+/// Settings → Content, "Pin fresh uploads from subscriptions".
+const PIN_FRESH_SUBS_SETTING: &str = "home_pin_fresh_subs";
 
 /// Whether channels the viewer follows may appear on Home; on unless they turned it off.
 pub async fn subscriptions_on_home(pool: &SqlitePool) -> bool {
     get_setting(pool, SUBSCRIPTIONS_ON_HOME_SETTING)
+        .await
+        .ok()
+        .flatten()
+        .is_none_or(|value| value != "false")
+}
+
+/// Whether the newest uploads of followed channels are pinned near the top of Home; on unless
+/// the viewer turned it off.
+pub async fn pins_fresh_subs(pool: &SqlitePool) -> bool {
+    get_setting(pool, PIN_FRESH_SUBS_SETTING)
         .await
         .ok()
         .flatten()
@@ -161,6 +173,7 @@ pub struct Inputs {
     pub max_video_age_ms: Option<u64>,
     pub hides_seen_videos: bool,
     pub subscriptions_on_home: bool,
+    pub pin_fresh_subs: bool,
 }
 
 impl Inputs {
@@ -207,6 +220,7 @@ impl Inputs {
         let max_video_age_ms = max_video_age_ms(pool).await;
         let hides_seen_videos = hides_seen_videos(pool).await;
         let subscriptions_on_home = subscriptions_on_home(pool).await;
+        let pin_fresh_subs = pins_fresh_subs(pool).await;
         if !subscriptions_on_home {
             channels.extend(subscriptions.names.keys().cloned());
         }
@@ -233,6 +247,7 @@ impl Inputs {
             max_video_age_ms,
             hides_seen_videos,
             subscriptions_on_home,
+            pin_fresh_subs,
         })
     }
 

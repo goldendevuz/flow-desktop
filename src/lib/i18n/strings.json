@@ -1453,6 +1453,8 @@
   "settings_home_shorts_shelf_desc": "Show Shorts shelf on the home page",
   "settings_home_subscriptions": "Subscriptions on Home",
   "settings_home_subscriptions_desc": "Mix videos from channels you follow into Home",
+  "settings_home_pin_fresh_subs": "Pin fresh uploads from subscriptions",
+  "settings_home_pin_fresh_subs_desc": "Put the newest uploads of channels you follow at the top of Home. Off: they rank like everything else.",
   "settings_home_refresh_on_reselect": "Refresh Home when reselected",
   "settings_home_refresh_on_reselect_desc": "Click Home again at the top to reload it",
   "settings_continue_watching": "Continue Watching",
