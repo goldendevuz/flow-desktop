@@ -168,6 +168,14 @@ lto = "thin"
 codegen-units = 16
 
 
+# Installers built for quick testing: no link-time optimization, so linking the app takes seconds
+# instead of minutes. The program runs a little slower and the file is a little larger than a
+# nightly or a release build. Built by .github/workflows/windows-exe.yml.
+[profile.fast]
+inherits = "release"
+lto = false
+codegen-units = 16
+
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util"] }
 wiremock = "0.6"
