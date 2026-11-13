@@ -1,4 +1,5 @@
 export const REGION_OPTIONS = [
+  { value: 'AUTO', label: 'Automatic (no country limit)' },
   { value: 'DZ', label: 'Algeria' }, { value: 'AR', label: 'Argentina' }, { value: 'AU', label: 'Australia' },
   { value: 'AT', label: 'Austria' }, { value: 'AZ', label: 'Azerbaijan' }, { value: 'BH', label: 'Bahrain' },
   { value: 'BD', label: 'Bangladesh' }, { value: 'BY', label: 'Belarus' }, { value: 'BE', label: 'Belgium' },
@@ -33,6 +34,6 @@ export const REGION_OPTIONS = [
   { value: 'TZ', label: 'Tanzania' }, { value: 'TH', label: 'Thailand' }, { value: 'TN', label: 'Tunisia' },
   { value: 'TR', label: 'Turkey' }, { value: 'UG', label: 'Uganda' }, { value: 'UA', label: 'Ukraine' },
   { value: 'AE', label: 'United Arab Emirates' }, { value: 'GB', label: 'United Kingdom' },
-  { value: 'US', label: 'United States' }, { value: 'UY', label: 'Uruguay' }, { value: 'UZ', label: 'Uzbekistan' }, { value: 'VE', label: 'Venezuela' },
+  { value: 'US', label: 'United States' }, { value: 'UY', label: 'Uruguay' }, { value: 'UZ', label: 'Uzbekistan (no country limit)' }, { value: 'VE', label: 'Venezuela' },
   { value: 'VN', label: 'Vietnam' }, { value: 'YE', label: 'Yemen' }, { value: 'ZW', label: 'Zimbabwe' },
 ];

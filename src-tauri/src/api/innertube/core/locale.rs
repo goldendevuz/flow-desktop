@@ -66,11 +66,24 @@ pub fn content_language() -> String {
     }
 }
 
-/// A two-letter country code in the form the site takes, or `US` for anything else.
+/// The choice that sends no country, so the site follows where the viewer is.
+pub const AUTO_COUNTRY: &str = "AUTO";
+
+/// Whether a request carries this country as `gl`. `UZ` does not: the site answers every browse
+/// request that names it (channels, tabs, feeds, trending) with a 400, so it is left out like
+/// `AUTO`, and the site uses the viewer's own location instead.
+#[must_use]
+pub fn sends_country(code: &str) -> bool {
+    !(code.eq_ignore_ascii_case(AUTO_COUNTRY) || code.eq_ignore_ascii_case("UZ"))
+}
+
+/// A two-letter country code in the form the site takes, `AUTO` as it is, or `US` for anything else.
 #[must_use]
 pub fn normalize_country(code: Option<&str>) -> String {
     let code = code.unwrap_or_default().trim().to_ascii_uppercase();
-    if code.len() == 2 && code.chars().all(|c| c.is_ascii_alphabetic()) {
+    if code == AUTO_COUNTRY {
+        AUTO_COUNTRY.to_string()
+    } else if code.len() == 2 && code.chars().all(|c| c.is_ascii_alphabetic()) {
         code
     } else {
         "US".to_string()
@@ -114,6 +127,16 @@ mod tests {
         assert_eq!(normalize_country(Some("1a")), "US");
         assert_eq!(normalize_country(Some("")), "US");
         assert_eq!(normalize_country(None), "US");
+        assert_eq!(normalize_country(Some(" auto ")), "AUTO");
+    }
+
+    #[test]
+    fn uz_and_auto_send_no_country() {
+        assert!(!sends_country("UZ"));
+        assert!(!sends_country("uz"));
+        assert!(!sends_country("AUTO"));
+        assert!(sends_country("US"));
+        assert!(sends_country("KZ"));
     }
 
     #[test]

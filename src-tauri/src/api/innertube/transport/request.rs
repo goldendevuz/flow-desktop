@@ -210,6 +210,16 @@ mod tests {
     }
 
     #[test]
+    fn a_country_the_site_rejects_is_left_out() {
+        for country in ["UZ", "AUTO"] {
+            let mut body = json!({ "browseId": "FEwhat_to_watch" });
+            assert!(ensure_context(&mut body, &WEB, None, "uz", country));
+            assert!(body["context"]["client"].get("gl").is_none(), "{country}");
+            assert_eq!(body["context"]["client"]["hl"], "uz");
+        }
+    }
+
+    #[test]
     fn only_mweb_repeats_its_user_agent_in_the_context() {
         assert_eq!(
             MWEB.context(None, None)["client"]["userAgent"],
