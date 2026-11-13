@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { isTauriEnv } from "./api/env";
+import { profileStorage } from "./storage/profileStorage";
 
 const STORAGE_KEY = "flow.zoom";
 const STEP = 0.1;
@@ -25,7 +26,7 @@ export function zoomDirectionOf(event: Pick<KeyboardEvent, "key" | "ctrlKey" | "
 
 function savedZoom(): number {
   try {
-    const value = Number(window.localStorage.getItem(STORAGE_KEY));
+    const value = Number(profileStorage.getItem(STORAGE_KEY, "device"));
     return Number.isFinite(value) && value >= MIN_ZOOM && value <= MAX_ZOOM ? value : 1;
   } catch {
     return 1;
@@ -34,7 +35,7 @@ function savedZoom(): number {
 
 function saveZoom(value: number): void {
   try {
-    window.localStorage.setItem(STORAGE_KEY, String(value));
+    profileStorage.setItem(STORAGE_KEY, String(value), "device");
   } catch {
     // A zoom that is not remembered still applies for this session.
   }
