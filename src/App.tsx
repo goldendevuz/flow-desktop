@@ -114,6 +114,7 @@ import { IS_MAIN_WINDOW } from "./lib/appWindow";
 import { SelectionMenu } from "./components/common/SelectionMenu";
 
 import { APP_TITLEBAR_HEIGHT } from "./lib/platform";
+import { useZoomShortcuts } from "./lib/useZoomShortcuts";
 import type { CSSProperties } from "react";
 import "./App.css";
 
@@ -136,6 +137,7 @@ function App() {
   useStartupSubscriptionRefresh();
   useImageProxyBootstrap();
   useTabHistoryShortcuts();
+  useZoomShortcuts();
   useEffect(installTabPlaybackSync, []);
   useTabShortcuts();
   useActiveTabTitle();
