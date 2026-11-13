@@ -1,12 +1,14 @@
 import { getString } from "./i18n/index";
 import type { HomeOrigin } from "./api/homeFeed";
 
-/** The "Why you see this" line for a Home card. */
-export function homeOriginLabel(origin: HomeOrigin): string {
+/** The "Why you see this" line for a Home card. A followed channel is named when its name is known. */
+export function homeOriginLabel(origin: HomeOrigin, channelName?: string | null): string {
   const detail = origin.detail?.trim();
   switch (origin.kind) {
-    case "subscription":
-      return getString("home_origin_subscription");
+    case "subscription": {
+      const name = channelName?.trim();
+      return name ? getString("home_origin_subscription_named", name) : getString("home_origin_subscription");
+    }
     case "related":
       return detail ? getString("home_origin_related", detail) : getString("home_origin_related_watched");
     case "search":
