@@ -33,6 +33,6 @@ export const REGION_OPTIONS = [
   { value: 'TZ', label: 'Tanzania' }, { value: 'TH', label: 'Thailand' }, { value: 'TN', label: 'Tunisia' },
   { value: 'TR', label: 'Turkey' }, { value: 'UG', label: 'Uganda' }, { value: 'UA', label: 'Ukraine' },
   { value: 'AE', label: 'United Arab Emirates' }, { value: 'GB', label: 'United Kingdom' },
-  { value: 'US', label: 'United States' }, { value: 'UY', label: 'Uruguay' }, { value: 'VE', label: 'Venezuela' },
+  { value: 'US', label: 'United States' }, { value: 'UY', label: 'Uruguay' }, { value: 'UZ', label: 'Uzbekistan' }, { value: 'VE', label: 'Venezuela' },
   { value: 'VN', label: 'Vietnam' }, { value: 'YE', label: 'Yemen' }, { value: 'ZW', label: 'Zimbabwe' },
 ];
