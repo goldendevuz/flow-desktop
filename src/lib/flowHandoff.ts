@@ -61,7 +61,8 @@ export function parseFlowUrl(raw: string): Handoff | null {
   } catch {
     return null;
   }
-  if (url.protocol !== "flow:") return null;
+  // "savetube:" is what this app registers with the system; "flow:" is what its own bridge and the browser extension send.
+  if (url.protocol !== "flow:" && url.protocol !== "savetube:") return null;
 
   // flow://watch → host "watch"; tolerate flow:///watch → path "/watch".
   const action = (url.host || url.pathname.replace(/^\/+/, "")).toLowerCase();

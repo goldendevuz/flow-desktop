@@ -13,9 +13,9 @@ use crate::profiles::ActiveProfile;
 use crate::security::keychain::{CredentialError, CredentialStore, Keychain};
 
 const KEYCHAIN_SERVICE: &str = if cfg!(debug_assertions) {
-    "io.github.aedev.flow.desktop.scrobbling.dev"
+    "uz.univel.savetube.desktop.scrobbling.dev"
 } else {
-    "io.github.aedev.flow.desktop.scrobbling"
+    "uz.univel.savetube.desktop.scrobbling"
 };
 const CREDENTIALS_ENTRY: &str = "CREDENTIALS";
 /// Before one item held everything, each account (by service name) and the own key had their own.

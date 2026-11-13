@@ -14,9 +14,9 @@ use super::sealed::random_bytes;
 use crate::security::keychain::{CredentialError, CredentialStore, Keychain, off_thread};
 
 const KEYCHAIN_SERVICE: &str = if cfg!(debug_assertions) {
-    "io.github.aedev.flow.desktop.sync.dev"
+    "uz.univel.savetube.desktop.sync.dev"
 } else {
-    "io.github.aedev.flow.desktop.sync"
+    "uz.univel.savetube.desktop.sync"
 };
 const DEVICE_ENTRY: &str = "DEVICE";
 

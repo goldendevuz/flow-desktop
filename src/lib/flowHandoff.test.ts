@@ -125,3 +125,14 @@ describe("the older verbs", () => {
     expect(parseFlowUrl("flow://watch?v=bad")).toBeNull();
   });
 });
+
+describe("savetube://", () => {
+  it("opens the same pages as flow://", () => {
+    expect(parseFlowUrl("savetube://watch?v=dQw4w9WgXcQ")).toEqual(parseFlowUrl("flow://watch?v=dQw4w9WgXcQ"));
+    expect(parseFlowUrl("savetube://watch?v=dQw4w9WgXcQ")).not.toBeNull();
+  });
+
+  it("still ignores other schemes", () => {
+    expect(parseFlowUrl("other://watch?v=dQw4w9WgXcQ")).toBeNull();
+  });
+});

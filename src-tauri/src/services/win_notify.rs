@@ -20,8 +20,8 @@ use tauri_winrt_notification::{Duration, IconCrop, Sound, Toast};
 /// Stable `AppUserModelID` for Flow's toasts. Matches the app identifier so the
 /// registry entry we write here and the Start-menu shortcut an installer creates
 /// resolve to the same identity.
-const AUMID: &str = "io.github.aedev.flow.desktop";
-const DISPLAY_NAME: &str = "Flow";
+const AUMID: &str = "uz.univel.savetube.desktop";
+const DISPLAY_NAME: &str = "SaveTube";
 /// Embedded so it is always available regardless of how the app was launched.
 const LOGO_BYTES: &[u8] = include_bytes!("../../icons/icon.png");
 const LOGO_FILE: &str = "flow-notify-logo.png";
