@@ -1,0 +1,69 @@
+name: SaveTube Windows installer
+
+# Builds only the Windows x64 installer, started by hand (Actions → Run workflow, or
+# `gh workflow run windows-exe.yml`). Runs one at a time and never cancels a build in progress,
+# and always saves its Rust cache, so a rebuild after small changes takes minutes, not an hour.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: windows-exe
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  windows:
+    name: Windows x64 installer
+    runs-on: windows-2025
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install Rust target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust build data
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+          shared-key: savetube-windows-x64
+          save-if: true
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate the build configuration
+        run: node scripts/write-nightly-config.mjs
+
+      - name: Build the installer
+        env:
+          # Read at compile time; without them Last.fm sign-in stays off in the build.
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          LASTFM_API_SECRET: ${{ secrets.LASTFM_API_SECRET }}
+        run: pnpm tauri build --target x86_64-pc-windows-msvc --bundles nsis --config src-tauri/tauri.nightly.generated.json -- --profile nightly
+
+      - name: Upload the installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: SaveTube-windows-x64-${{ github.run_number }}
+          path: src-tauri/target/x86_64-pc-windows-msvc/nightly/bundle/nsis/*.exe
+          if-no-files-found: error
+          retention-days: 14
