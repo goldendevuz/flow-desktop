@@ -25,9 +25,12 @@ use crate::flow_neuro::scoring::classify_persona;
 use crate::services::recommendation_service::{DiscoverySurface, RecommendationService};
 use crate::services::youtube_service::YoutubeService;
 
-/// New channels looked up per load for the minimum subscriber count, three at a time.
-const CHANNEL_LOOKUPS_PER_LOAD: usize = 12;
-const CHANNEL_LOOKUP_CONCURRENCY: usize = 3;
+/// New channels looked up per load for the minimum subscriber count, four at a time. A page
+/// holds about thirty channels, so one load covers it; counts are kept for a month, so later
+/// loads look up few. (Twelve left most of a page unchecked, and the filter only caught a few
+/// channels per refresh.)
+const CHANNEL_LOOKUPS_PER_LOAD: usize = 60;
+const CHANNEL_LOOKUP_CONCURRENCY: usize = 4;
 const CHANNEL_LOOKUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(6);
 const WAVE1_QUERIES: usize = 3;
 const MAX_RELATED_SEEDS: usize = 4;
