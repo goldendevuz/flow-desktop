@@ -49,6 +49,9 @@ pub fn localized_count(text: &str) -> Option<u64> {
         return None;
     }
     let token: String = chars[start..end].iter().collect();
+    if let Some(count) = uzbek_count(&token, &chars[end..]) {
+        return Some(count);
+    }
     let next = chars[end..].iter().find(|c| !c.is_whitespace()).copied();
     if let Some((_, multiplier)) = CJK_MULTIPLIERS.iter().find(|(mark, _)| Some(*mark) == next) {
         let value = read_number(&token.replace(['\'', ' ', '\u{a0}', '\u{202f}'], ""))?;
@@ -66,6 +69,31 @@ pub fn localized_count(text: &str) -> Option<u64> {
     (grouped && digits.len() >= 4)
         .then(|| digits.parse().ok())
         .flatten()
+}
+
+/// Uzbek counts: "ming" is a thousand, "mln" a million and "mlrd" a billion ("6,2 ming marta"),
+/// and "marta" after a plain number marks an exact count ("61 marta", "435 650 marta"). Any other
+/// word leaves the count to the general reader.
+fn uzbek_count(token: &str, after: &[char]) -> Option<u64> {
+    let word: String = after
+        .iter()
+        .skip_while(|c| c.is_whitespace())
+        .take_while(|c| c.is_alphabetic())
+        .collect::<String>()
+        .to_lowercase();
+    let multiplier = match word.as_str() {
+        "ming" => 1e3,
+        "mln" => 1e6,
+        "mlrd" => 1e9,
+        "marta" => {
+            let digits: String = token.chars().filter(char::is_ascii_digit).collect();
+            return digits.parse().ok();
+        }
+        _ => return None,
+    };
+    let value = read_number(&token.replace([' ', '\u{a0}', '\u{202f}'], ""))?;
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+    Some((value * multiplier).round() as u64)
 }
 
 /// The number is read with its grouping or decimal mark, then a K, M or B
@@ -143,6 +171,17 @@ mod tests {
         assert_eq!(localized_count("6,3\u{a0}млн"), None);
         assert_eq!(localized_count("3,8\u{a0}mil"), None);
         assert_eq!(localized_count("Premiere am 12.10.2026, 19:00"), None);
+    }
+
+    #[test]
+    fn uzbek_counts_are_read_with_their_words() {
+        assert_eq!(localized_count("61 marta"), Some(61));
+        assert_eq!(localized_count("435\u{a0}650 marta"), Some(435_650));
+        assert_eq!(localized_count("6,2 ming marta"), Some(6_200));
+        assert_eq!(localized_count("4,1 ming marta"), Some(4_100));
+        assert_eq!(localized_count("1,2 mln marta"), Some(1_200_000));
+        assert_eq!(localized_count("12 mlrd"), Some(12_000_000_000));
+        assert_eq!(localized_count("84 marta"), Some(84));
     }
 
     #[test]
