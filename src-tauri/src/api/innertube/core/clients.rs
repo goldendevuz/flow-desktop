@@ -105,11 +105,14 @@ impl YouTubeClient {
             "clientName": self.name,
             "clientVersion": self.version,
             "hl": hl,
-            "gl": gl.unwrap_or("US"),
             // Times YouTube writes out ("Scheduled for 7:00 PM") are rendered in
             // this offset, so it is the device's own.
             "utcOffsetMinutes": chrono::Local::now().offset().local_minus_utc() / 60,
         });
+        let country = gl.unwrap_or("US");
+        if super::locale::sends_country(country) {
+            client["gl"] = json!(country);
+        }
         for (key, value) in [
             ("osName", self.os_name),
             ("osVersion", self.os_version),
