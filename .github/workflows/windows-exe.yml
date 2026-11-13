@@ -46,7 +46,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
-          shared-key: savetube-windows-x64
+          shared-key: savetube-windows-x64-fast
           save-if: true
 
       - name: Install frontend dependencies
@@ -65,12 +65,12 @@ jobs:
           # Read at compile time; without them Last.fm sign-in stays off in the build.
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_API_SECRET: ${{ secrets.LASTFM_API_SECRET }}
-        run: pnpm tauri build --target x86_64-pc-windows-msvc --bundles nsis --config src-tauri/tauri.nightly.generated.json -- --profile nightly
+        run: pnpm tauri build --target x86_64-pc-windows-msvc --bundles nsis --config src-tauri/tauri.nightly.generated.json -- --profile fast
 
       - name: Upload the installer
         uses: actions/upload-artifact@v7
         with:
           name: SaveTube-windows-x64-${{ github.run_number }}
-          path: src-tauri/target/x86_64-pc-windows-msvc/nightly/bundle/nsis/*.exe
+          path: src-tauri/target/x86_64-pc-windows-msvc/fast/bundle/nsis/*.exe
           if-no-files-found: error
           retention-days: 14
