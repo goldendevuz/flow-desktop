@@ -64,19 +64,43 @@ mod tests {
 
     #[test]
     fn catches_the_usual_labels() {
-        assert!(looks_like_music_video(&video("Anvar - Jonim jonimey (Official Music Video)", "NevoMusic")));
-        assert!(looks_like_music_video(&video("Autumn - NIKI (Lyrics)", "Kioumiusic")));
-        assert!(looks_like_music_video(&video("Here In Your Dreams (ft. Liam Pearce) |", "BlushCrunch")));
-        assert!(looks_like_music_video(&video("Asror Uz - Ko'rolmaysiz | Mood Video", "ASROR_UZ_")));
+        assert!(looks_like_music_video(&video(
+            "Anvar - Jonim jonimey (Official Music Video)",
+            "NevoMusic"
+        )));
+        assert!(looks_like_music_video(&video(
+            "Autumn - NIKI (Lyrics)",
+            "Kioumiusic"
+        )));
+        assert!(looks_like_music_video(&video(
+            "Here In Your Dreams (ft. Liam Pearce) |",
+            "BlushCrunch"
+        )));
+        assert!(looks_like_music_video(&video(
+            "Asror Uz - Ko'rolmaysiz | Mood Video",
+            "ASROR_UZ_"
+        )));
         assert!(looks_like_music_video(&video("Kechqurun klip", "Jon")));
         assert!(looks_like_music_video(&video("Anything", "ArtistVEVO")));
-        assert!(looks_like_music_video(&video("Anything", "Some Artist - Topic")));
+        assert!(looks_like_music_video(&video(
+            "Anything",
+            "Some Artist - Topic"
+        )));
     }
 
     #[test]
     fn leaves_other_videos_alone() {
-        assert!(!looks_like_music_video(&video("Did Gravity Ever Change? Science Finally...", "Anton Petrov")));
-        assert!(!looks_like_music_video(&video("What is REST API (http)? Soap? GraphQL...", "Ulbi TV")));
-        assert!(!looks_like_music_video(&video("Fireplace and rain sounds for sleep", "Cozy")));
+        assert!(!looks_like_music_video(&video(
+            "Did Gravity Ever Change? Science Finally...",
+            "Anton Petrov"
+        )));
+        assert!(!looks_like_music_video(&video(
+            "What is REST API (http)? Soap? GraphQL...",
+            "Ulbi TV"
+        )));
+        assert!(!looks_like_music_video(&video(
+            "Fireplace and rain sounds for sleep",
+            "Cozy"
+        )));
     }
 }
