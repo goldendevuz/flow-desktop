@@ -108,7 +108,7 @@ describe("useLinkedDevicesStore", () => {
     api.retryKeychain.mockRejectedValueOnce({ kind: "linkedKeychain", message: "Waiting for access to the keychain" });
     await useLinkedDevicesStore.getState().retryKeychain();
     expect(useLinkedDevicesStore.getState().error).toBe(
-      "Flow is waiting for access to the keychain. Allow it when macOS asks, then try again.",
+      "SaveTube is waiting for access to the keychain. Allow it when macOS asks, then try again.",
     );
 
     api.retryKeychain.mockResolvedValueOnce(undefined);

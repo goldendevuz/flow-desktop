@@ -86,6 +86,6 @@ describe("QualityTab codec choices", () => {
     preferences.codec = "AV1";
     vi.stubGlobal("MediaSource", { isTypeSupported: (type: string) => !type.includes("av01") });
     render();
-    expect(document.body.textContent).toContain("AV1 can't play on this device, so Flow uses another codec.");
+    expect(document.body.textContent).toContain("AV1 can't play on this device, so SaveTube uses another codec.");
   });
 });

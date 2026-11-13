@@ -175,7 +175,6 @@ export function Sidebar({ mode = 'normal' }: SidebarProps) {
               collapsed={collapsed}
             />
             <SidebarItem onOpenInNewTab={openInNewTab} to="/sponsorblock" {...navIconPair('extensions')} label={getString('sidebar_extensions')} onClick={closeOverlay} collapsed={collapsed} />
-            <SidebarItem onOpenInNewTab={openInNewTab} to="/support" {...navIconPair('support')} label={getString('sidebar_support')} onClick={closeOverlay} collapsed={collapsed} />
           </nav>
         </div>
       </div>

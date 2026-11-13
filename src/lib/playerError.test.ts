@@ -33,7 +33,7 @@ describe("classifyPlayerError", () => {
     const limited = classifyPlayerError(new BackendApiError("browse: rate limited", "rateLimited", null));
     expect(limited.kind).toBe("rateLimited");
     expect(limited.retryable).toBe(true);
-    expect(limited.title).toBe("YouTube asked Flow to slow down");
+    expect(limited.title).toBe("YouTube asked SaveTube to slow down");
   });
 
   it("accepts a raw { message, kind } error-response object", () => {
