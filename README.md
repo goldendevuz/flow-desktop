@@ -1,3 +1,5 @@
+> **SaveTube** is a personal fork of [Flow Desktop](https://github.com/Flow-Tube/Flow-Desktop) by A-EDev, released under the GNU GPL v3.0. Source: https://github.com/goldendevuz/flow-desktop. The original Flow brand and donation pages belong to the original project.
+
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://assets.flow-tube.org/v1/banners/flow-desktop-dark.svg">

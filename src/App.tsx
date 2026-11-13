@@ -375,7 +375,7 @@ function App() {
         <DownloadDialog />
         <DownloadActivity />
       </LayoutGroup>
-      <DonationPromptHost enabled={IS_MAIN_WINDOW && location.pathname !== "/onboarding"} />
+      <DonationPromptHost enabled={false} />
       <UpdateManager enabled={IS_MAIN_WINDOW && location.pathname !== "/onboarding"} />
       {IS_MAIN_WINDOW && <WhosWatchingOverlay />}
       {IS_MAIN_WINDOW && location.pathname !== "/onboarding" && <CrashReportHost />}

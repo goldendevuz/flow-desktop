@@ -152,7 +152,7 @@ describe("RecapPage", () => {
     await open();
     const play = [...host.querySelectorAll("button")].find((button) => button.textContent === "Play your recap")!;
     await act(async () => play.click());
-    expect(document.body.querySelector('[role="dialog"]')?.textContent).toContain("in Flow");
+    expect(document.body.querySelector('[role="dialog"]')?.textContent).toContain("in SaveTube");
     await act(async () => root.unmount());
     root = createRoot(host);
     await open("/recap?period=all");

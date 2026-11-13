@@ -60,7 +60,7 @@ afterEach(() => {
 
 describe("RecapStory", () => {
   it("opens on the intro, over the whole window", () => {
-    expect(dialog().textContent).toContain("Your September 2026 in Flow");
+    expect(dialog().textContent).toContain("Your September 2026 in SaveTube");
     expect(dialog().textContent).toContain("Page 1 of 3");
     expect(dialog().className).toContain("fixed inset-0");
   });

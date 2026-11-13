@@ -34,7 +34,7 @@ describe("deltaLabel", () => {
     expect(deltaLabel(120 * 60_000, 60 * 60_000)).toBe("1 h 0 min more than the time before");
     expect(deltaLabel(30 * 60_000, 60 * 60_000)).toBe("30 min less than the time before");
     expect(deltaLabel(100, 100)).toBe("About the same as the time before");
-    expect(deltaLabel(100, null)).toBe("Time in Flow");
+    expect(deltaLabel(100, null)).toBe("Time in SaveTube");
   });
 });
 

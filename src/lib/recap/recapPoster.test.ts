@@ -62,7 +62,7 @@ describe("drawPoster", () => {
     const { ctx, texts } = fakeContext();
     drawPoster(ctx, posterData(summary, "September 2026"), { channel: null, artist: null }, palette);
     const written = texts.map((entry) => entry.text);
-    for (const text of ["Flow Recap", "September 2026", "1 h 5 min", "12", "3 days", "A channel", "An artist", "Night owl", "Made with Flow"]) {
+    for (const text of ["SaveTube Recap", "September 2026", "1 h 5 min", "12", "3 days", "A channel", "An artist", "Night owl", "Made with SaveTube"]) {
       expect(written).toContain(text);
     }
     for (const entry of texts) {
@@ -78,7 +78,7 @@ describe("drawPoster", () => {
     const { ctx, texts } = fakeContext();
     const data = { ...posterData(summary, "2026"), channelName: null, artistName: null, insight: null };
     drawPoster(ctx, data, { channel: null, artist: null }, palette);
-    expect(texts.map((entry) => entry.text)).toContain("Made with Flow");
+    expect(texts.map((entry) => entry.text)).toContain("Made with SaveTube");
   });
 });
 
