@@ -99,6 +99,7 @@ setting	subscription_collaborations_enabled	PROFILE	settings	Pull collaborations
 setting	subscription_collaborations_v1	PROFILE	library	Collaboration index for this profiles subscribed channels
 setting	home_subscriptions_enabled	PROFILE	settings	Show subscriptions on Home, as on Android
 setting	home_pin_fresh_subs	PROFILE	settings	Pin the newest uploads of followed channels near the top of Home
+setting	home_hide_music_videos	PROFILE	settings	Keep music videos off Home
 setting	stable_volume_enabled	PROFILE	settings	Playback preference
 setting	sponsorblock_categories	PROFILE	settings	SponsorBlock preference
 setting	sponsorblock_enabled	PROFILE	settings	SponsorBlock preference

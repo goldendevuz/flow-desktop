@@ -184,6 +184,7 @@ export const SETTINGS_INDEX: SettingEntry[] = [
     { title: "settings_continue_watching", summary: "settings_continue_watching_desc" },
     { title: "settings_home_subscriptions", summary: "settings_home_subscriptions_desc" },
     { title: "settings_home_pin_fresh_subs", summary: "settings_home_pin_fresh_subs_desc", keywords: ["pin", "fresh", "new uploads"] },
+    { title: "settings_home_hide_music_videos", summary: "settings_home_hide_music_videos_desc", keywords: ["music video", "clip", "lyrics", "vevo", "no music"] },
     { title: "settings_home_refresh_on_reselect", summary: "settings_home_refresh_on_reselect_desc" },
     { title: "settings_home_max_age", summary: "settings_home_max_age_desc" },
     { title: "settings_comments", summary: "settings_comments_desc" },

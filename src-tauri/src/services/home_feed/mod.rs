@@ -16,6 +16,7 @@ mod kind_checks;
 mod lanes;
 mod load;
 mod mixer;
+mod music_video;
 mod more;
 pub mod neighbours;
 mod origin;

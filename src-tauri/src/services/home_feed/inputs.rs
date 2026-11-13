@@ -9,6 +9,7 @@ use sqlx::SqlitePool;
 use super::card::Card;
 use super::channel_memory::Watch;
 use super::filters::is_within;
+use super::music_video::looks_like_music_video;
 use super::seeds::{SeedInput, SeedSource};
 use crate::db::settings::get_setting;
 use crate::db::watch_history::{WatchHistoryRecord, get_watch_history};
@@ -32,6 +33,8 @@ const HIDE_SEEN_SETTING: &str = "hide_seen_videos";
 const SUBSCRIPTIONS_ON_HOME_SETTING: &str = "home_subscriptions_enabled";
 /// Settings → Content, "Pin fresh uploads from subscriptions".
 const PIN_FRESH_SUBS_SETTING: &str = "home_pin_fresh_subs";
+/// Settings → Content, "Hide music videos".
+const HIDE_MUSIC_VIDEOS_SETTING: &str = "home_hide_music_videos";
 
 /// Whether channels the viewer follows may appear on Home; on unless they turned it off.
 pub async fn subscriptions_on_home(pool: &SqlitePool) -> bool {
@@ -50,6 +53,15 @@ pub async fn pins_fresh_subs(pool: &SqlitePool) -> bool {
         .ok()
         .flatten()
         .is_none_or(|value| value != "false")
+}
+
+/// Whether music videos are kept off Home; off unless the viewer turned it on.
+pub async fn hides_music_videos(pool: &SqlitePool) -> bool {
+    get_setting(pool, HIDE_MUSIC_VIDEOS_SETTING)
+        .await
+        .ok()
+        .flatten()
+        .is_some_and(|value| value == "true")
 }
 
 /// Whether the viewer chose never to be recommended a video they were already shown.
@@ -124,6 +136,8 @@ pub struct Exclusions {
     seen: HashSet<String>,
     /// The oldest a video may be and the time it is measured from, when the viewer set a limit.
     age_limit: Option<(u64, u64)>,
+    /// Set when the viewer keeps music videos off Home.
+    hide_music_videos: bool,
     matchers: BlockedMatchers,
     spec: crate::flow_neuro::keyspec::KeySpec,
 }
@@ -156,6 +170,7 @@ impl Exclusions {
             || self.shorts.contains(card.id())
             || self.unplayable.contains(card.id())
             || self.channels.contains(card.channel_id())
+            || (self.hide_music_videos && looks_like_music_video(&card.video))
             || self
                 .matchers
                 .blocks_text(&card.video.title, &card.video.channel_name, &self.spec)
@@ -221,6 +236,7 @@ impl Inputs {
         let hides_seen_videos = hides_seen_videos(pool).await;
         let subscriptions_on_home = subscriptions_on_home(pool).await;
         let pin_fresh_subs = pins_fresh_subs(pool).await;
+        let hide_music_videos = hides_music_videos(pool).await;
         if !subscriptions_on_home {
             channels.extend(subscriptions.names.keys().cloned());
         }
@@ -236,6 +252,7 @@ impl Inputs {
                     HashSet::new()
                 },
                 age_limit: max_video_age_ms.map(|max_age_ms| (max_age_ms, now_ms)),
+                hide_music_videos,
                 matchers: BlockedMatchers::new(&brain.blocked_topics, &spec),
                 spec,
             },
