@@ -8,7 +8,7 @@ use sqlx::SqlitePool;
 
 use super::card::Card;
 use super::channel_memory::Watch;
-use super::filters::is_within;
+use super::filters::{is_below_min_views, is_within};
 use super::music_video::looks_like_music_video;
 use super::seeds::{SeedInput, SeedSource};
 use crate::db::settings::get_setting;
@@ -31,6 +31,8 @@ const MAX_VIDEO_AGE_SETTING: &str = "home_max_video_age";
 const HIDE_SEEN_SETTING: &str = "hide_seen_videos";
 /// Settings → Content, "Subscriptions on Home".
 const SUBSCRIPTIONS_ON_HOME_SETTING: &str = "home_subscriptions_enabled";
+/// Settings → Content, "Hide videos with fewer views than"; 0 or unset is off.
+const MIN_VIEWS_SETTING: &str = "home_min_views";
 /// Settings → Content, "Pin fresh uploads from subscriptions".
 const PIN_FRESH_SUBS_SETTING: &str = "home_pin_fresh_subs";
 /// Settings → Content, "Hide music videos".
@@ -43,6 +45,18 @@ pub async fn subscriptions_on_home(pool: &SqlitePool) -> bool {
         .ok()
         .flatten()
         .is_none_or(|value| value != "false")
+}
+
+/// The fewest views a video may have to show on Home, by the viewer's choice; `None` when off.
+pub async fn min_views(pool: &SqlitePool) -> Option<u64> {
+    let views: u64 = get_setting(pool, MIN_VIEWS_SETTING)
+        .await
+        .ok()
+        .flatten()?
+        .trim()
+        .parse()
+        .ok()?;
+    (views > 0).then_some(views)
 }
 
 /// Whether the newest uploads of followed channels are pinned near the top of Home; on unless
@@ -138,6 +152,8 @@ pub struct Exclusions {
     age_limit: Option<(u64, u64)>,
     /// Set when the viewer keeps music videos off Home.
     hide_music_videos: bool,
+    /// The fewest views a video may have, when the viewer set a minimum.
+    min_views: Option<u64>,
     matchers: BlockedMatchers,
     spec: crate::flow_neuro::keyspec::KeySpec,
 }
@@ -157,6 +173,9 @@ impl Exclusions {
     pub fn hides(&self, card: &Card) -> bool {
         self.hides_rewatch(card)
             || self.seen.contains(card.id())
+            || self
+                .min_views
+                .is_some_and(|min| is_below_min_views(&card.video, min))
             || self
                 .age_limit
                 .is_some_and(|(max_age_ms, now_ms)| !is_within(card, now_ms, max_age_ms))
@@ -237,6 +256,7 @@ impl Inputs {
         let subscriptions_on_home = subscriptions_on_home(pool).await;
         let pin_fresh_subs = pins_fresh_subs(pool).await;
         let hide_music_videos = hides_music_videos(pool).await;
+        let min_views = min_views(pool).await;
         if !subscriptions_on_home {
             channels.extend(subscriptions.names.keys().cloned());
         }
@@ -253,6 +273,7 @@ impl Inputs {
                 },
                 age_limit: max_video_age_ms.map(|max_age_ms| (max_age_ms, now_ms)),
                 hide_music_videos,
+                min_views,
                 matchers: BlockedMatchers::new(&brain.blocked_topics, &spec),
                 spec,
             },
