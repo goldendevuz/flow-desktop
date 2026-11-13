@@ -87,8 +87,8 @@ export function MediaMenu({ anchor, onClose, actions, header, note, className = 
               />
             ) : null}
             <div className="min-w-0">
-              <p dir="auto" className="line-clamp-2 font-medium leading-snug text-chrome-neutral-100">{header.title}</p>
-              {header.subtitle ? <p dir="auto" className="mt-0.5 truncate text-xs text-chrome-neutral-400">{header.subtitle}</p> : null}
+              <p dir="auto" className="break-words font-medium leading-snug text-chrome-neutral-100">{header.title}</p>
+              {header.subtitle ? <p dir="auto" className="mt-0.5 break-words text-xs text-chrome-neutral-400">{header.subtitle}</p> : null}
             </div>
           </div>
         ) : null}
