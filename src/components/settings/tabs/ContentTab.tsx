@@ -52,6 +52,7 @@ export function ContentTab() {
   const [musicContent, setMusicContent] = useBoolPref(SETTINGS.MUSIC_CONTENT_ENABLED, true);
   const [categoriesTab, setCategoriesTab] = useBoolPref(SETTINGS.CATEGORIES_NAV_TAB_ENABLED, false);
   const [homeMaxVideoAge, setHomeMaxVideoAge] = usePreference(SETTINGS.HOME_MAX_VIDEO_AGE, '0');
+  const [homeMinViews, setHomeMinViews] = usePreference(SETTINGS.HOME_MIN_VIEWS, '0');
 
   return (
     <div className="space-y-6 pb-8">
@@ -109,6 +110,15 @@ export function ContentTab() {
             { value: '720', label: getString('settings_home_max_age_1m') },
             { value: '4320', label: getString('settings_home_max_age_6m') },
             { value: '8760', label: getString('settings_home_max_age_1y') },
+          ]} />
+        </SettingItem>
+        <SettingItem title={getString('settings_home_min_views')} description={getString('settings_home_min_views_desc')} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_VIEWS)}>
+          <Select value={homeMinViews} onChange={setHomeMinViews} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_VIEWS)} options={[
+            { value: '0', label: getString('settings_home_min_views_off') },
+            { value: '100', label: getString('settings_home_min_views_100') },
+            { value: '1000', label: getString('settings_home_min_views_1k') },
+            { value: '10000', label: getString('settings_home_min_views_10k') },
+            { value: '100000', label: getString('settings_home_min_views_100k') },
           ]} />
         </SettingItem>
       </SettingsGroup>

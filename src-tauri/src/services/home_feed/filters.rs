@@ -208,3 +208,45 @@ pub(super) mod tests {
         assert!(is_within(&upload, 1 + 23 * 3_600_000, day));
     }
 }
+
+/// A video the viewer's minimum view count rules out. Live streams and videos with no readable
+/// count are never ruled out: their numbers are not views, or are not known.
+#[must_use]
+pub fn is_below_min_views(video: &crate::models::video::VideoSummary, min_views: u64) -> bool {
+    !video.is_live && !video.is_upcoming && video.view_count.is_some_and(|views| views < min_views)
+}
+
+#[cfg(test)]
+mod min_views_tests {
+    use super::is_below_min_views;
+    use crate::models::video::VideoSummary;
+
+    fn video(views: Option<u64>) -> VideoSummary {
+        VideoSummary {
+            view_count: views,
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn rules_out_videos_under_the_minimum() {
+        assert!(is_below_min_views(&video(Some(999)), 1000));
+        assert!(!is_below_min_views(&video(Some(1000)), 1000));
+        assert!(!is_below_min_views(&video(Some(5_000_000)), 1000));
+    }
+
+    #[test]
+    fn keeps_videos_whose_count_is_unknown() {
+        assert!(!is_below_min_views(&video(None), 1000));
+    }
+
+    #[test]
+    fn keeps_live_and_upcoming_videos() {
+        let mut live = video(Some(12));
+        live.is_live = true;
+        assert!(!is_below_min_views(&live, 1000));
+        let mut upcoming = video(Some(0));
+        upcoming.is_upcoming = true;
+        assert!(!is_below_min_views(&upcoming, 1000));
+    }
+}
