@@ -25,6 +25,10 @@ use crate::flow_neuro::scoring::classify_persona;
 use crate::services::recommendation_service::{DiscoverySurface, RecommendationService};
 use crate::services::youtube_service::YoutubeService;
 
+/// New channels looked up per load for the minimum subscriber count, three at a time.
+const CHANNEL_LOOKUPS_PER_LOAD: usize = 12;
+const CHANNEL_LOOKUP_CONCURRENCY: usize = 3;
+const CHANNEL_LOOKUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(6);
 const WAVE1_QUERIES: usize = 3;
 const MAX_RELATED_SEEDS: usize = 4;
 const MAX_SAVED_SEEDS: usize = 5;
@@ -456,6 +460,7 @@ impl HomeFeedService {
         let current = || self.generation() == generation;
         self.drop_late_shorts(app, &yt, &pool, &mut after, &followed)
             .await;
+        self.drop_small_channels(app, &yt, &pool, &mut after).await;
         if current() {
             self.saved_interest(app, &yt, &rec, &pool, &after, &followed)
                 .await;
@@ -678,6 +683,90 @@ impl HomeFeedService {
             let _ = cache::save_last_feed(pool, &cards, &origins, loaded_at).await;
         }
         after.inputs.exclusions.add_shorts(shorts);
+    }
+
+    /// With a minimum subscriber count set, the channels on screen are looked up (a few new ones
+    /// per load; counts are kept for a month), and a card from a channel below the minimum leaves
+    /// the feed, which is saved again without it. Channels already known never appear at all.
+    async fn drop_small_channels(
+        &self,
+        app: &AppHandle,
+        yt: &YoutubeService,
+        pool: &SqlitePool,
+        after: &mut AfterPaint,
+    ) {
+        let Some(min) = after.inputs.exclusions.min_subscribers() else {
+            return;
+        };
+        let mut on_screen: Vec<String> = Vec::new();
+        for card in &self.snapshot().cards {
+            let id = card.channel_id();
+            if !id.is_empty() && !on_screen.iter().any(|seen| seen == id) {
+                on_screen.push(id.to_string());
+            }
+        }
+        let missing: Vec<String> = on_screen
+            .iter()
+            .filter(|id| {
+                !after
+                    .inputs
+                    .exclusions
+                    .channel_subscribers()
+                    .contains_key(*id)
+            })
+            .take(CHANNEL_LOOKUPS_PER_LOAD)
+            .cloned()
+            .collect();
+        if !missing.is_empty() {
+            let read = crate::api::http::bounded_join(
+                missing,
+                CHANNEL_LOOKUP_CONCURRENCY,
+                |id| async move {
+                    let details =
+                        tokio::time::timeout(CHANNEL_LOOKUP_TIMEOUT, yt.get_channel_details(&id))
+                            .await;
+                    let count = details
+                        .ok()
+                        .and_then(Result::ok)
+                        .and_then(|channel| channel.subscriber_count);
+                    (id, count)
+                },
+            )
+            .await;
+            let counts: HashMap<String, u64> = read
+                .into_iter()
+                .filter_map(|(id, count)| count.map(|count| (id, count)))
+                .collect();
+            let _ = crate::db::channel_subscribers::remember(
+                pool,
+                &counts,
+                i64::try_from(now_ms()).unwrap_or(i64::MAX),
+            )
+            .await;
+            after.inputs.exclusions.add_channel_subscribers(counts);
+        }
+        let known = after.inputs.exclusions.channel_subscribers();
+        let small: HashSet<String> = on_screen
+            .into_iter()
+            .filter(|id| known.get(id).is_some_and(|count| *count < min))
+            .collect();
+        if small.is_empty() {
+            return;
+        }
+        let mut saved = None;
+        self.update(app, after.generation, |feed| {
+            feed.snapshot
+                .cards
+                .retain(|c| !small.contains(c.channel_id()));
+            saved = Some((
+                feed.snapshot.cards.clone(),
+                feed.snapshot.origins.clone(),
+                feed.loaded_at,
+            ));
+        });
+        if let Some((cards, origins, loaded_at)) = saved {
+            let _ = cache::save_last_feed(pool, &cards, &origins, loaded_at).await;
+        }
     }
 
     async fn subscription_top_up(

@@ -53,6 +53,7 @@ export function ContentTab() {
   const [categoriesTab, setCategoriesTab] = useBoolPref(SETTINGS.CATEGORIES_NAV_TAB_ENABLED, false);
   const [homeMaxVideoAge, setHomeMaxVideoAge] = usePreference(SETTINGS.HOME_MAX_VIDEO_AGE, '0');
   const [homeMinViews, setHomeMinViews] = usePreference(SETTINGS.HOME_MIN_VIEWS, '0');
+  const [homeMinSubscribers, setHomeMinSubscribers] = usePreference(SETTINGS.HOME_MIN_SUBSCRIBERS, '0');
 
   return (
     <div className="space-y-6 pb-8">
@@ -123,6 +124,18 @@ export function ContentTab() {
             { value: '1000000', label: getString('settings_home_min_views_1m') },
             { value: '10000000', label: getString('settings_home_min_views_10m') },
             { value: '100000000', label: getString('settings_home_min_views_100m') },
+          ]} />
+        </SettingItem>
+        <SettingItem title={getString('settings_home_min_subscribers')} description={getString('settings_home_min_subscribers_desc')} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_SUBSCRIBERS)}>
+          <Select value={homeMinSubscribers} onChange={setHomeMinSubscribers} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_SUBSCRIBERS)} options={[
+            { value: '0', label: getString('settings_home_min_subscribers_off') },
+            { value: '1000', label: getString('settings_home_min_subscribers_1k') },
+            { value: '10000', label: getString('settings_home_min_subscribers_10k') },
+            { value: '100000', label: getString('settings_home_min_subscribers_100k') },
+            { value: '1000000', label: getString('settings_home_min_subscribers_1m') },
+            { value: '10000000', label: getString('settings_home_min_subscribers_10m') },
+            { value: '100000000', label: getString('settings_home_min_subscribers_100m') },
+            { value: '1000000000', label: getString('settings_home_min_subscribers_1b') },
           ]} />
         </SettingItem>
       </SettingsGroup>

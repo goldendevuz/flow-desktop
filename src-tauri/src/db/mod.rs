@@ -3,6 +3,7 @@ use std::str::FromStr;
 use std::time::Duration;
 
 pub mod cache;
+pub mod channel_subscribers;
 pub mod device;
 pub mod download_collections;
 pub mod download_jobs;

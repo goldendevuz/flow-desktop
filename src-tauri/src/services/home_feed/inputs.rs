@@ -33,6 +33,8 @@ const HIDE_SEEN_SETTING: &str = "hide_seen_videos";
 const SUBSCRIPTIONS_ON_HOME_SETTING: &str = "home_subscriptions_enabled";
 /// Settings → Content, "Hide videos with fewer views than"; 0 or unset is off.
 const MIN_VIEWS_SETTING: &str = "home_min_views";
+/// Settings → Content, "Hide channels with fewer subscribers than"; 0 or unset is off.
+const MIN_SUBSCRIBERS_SETTING: &str = "home_min_subscribers";
 /// Settings → Content, "Pin fresh uploads from subscriptions".
 const PIN_FRESH_SUBS_SETTING: &str = "home_pin_fresh_subs";
 /// Settings → Content, "Hide music videos".
@@ -57,6 +59,18 @@ pub async fn min_views(pool: &SqlitePool) -> Option<u64> {
         .parse()
         .ok()?;
     (views > 0).then_some(views)
+}
+
+/// The fewest subscribers a channel may have to show on Home, by the viewer's choice; `None` when off.
+pub async fn min_subscribers(pool: &SqlitePool) -> Option<u64> {
+    let subscribers: u64 = get_setting(pool, MIN_SUBSCRIBERS_SETTING)
+        .await
+        .ok()
+        .flatten()?
+        .trim()
+        .parse()
+        .ok()?;
+    (subscribers > 0).then_some(subscribers)
 }
 
 /// Whether the newest uploads of followed channels are pinned near the top of Home; on unless
@@ -154,6 +168,10 @@ pub struct Exclusions {
     hide_music_videos: bool,
     /// The fewest views a video may have, when the viewer set a minimum.
     min_views: Option<u64>,
+    /// The fewest subscribers a channel may have, when the viewer set a minimum, and the counts
+    /// read so far. A channel whose count is not known yet is never ruled out.
+    min_subscribers: Option<u64>,
+    channel_subscribers: HashMap<String, u64>,
     matchers: BlockedMatchers,
     spec: crate::flow_neuro::keyspec::KeySpec,
 }
@@ -167,6 +185,21 @@ impl Exclusions {
     /// Shorts found after the inputs were read.
     pub fn add_shorts(&mut self, shorts: HashSet<String>) {
         self.shorts.extend(shorts);
+    }
+
+    /// The fewest subscribers a channel may have, when the viewer set one.
+    pub fn min_subscribers(&self) -> Option<u64> {
+        self.min_subscribers
+    }
+
+    /// The subscriber counts known so far, by channel id.
+    pub fn channel_subscribers(&self) -> &HashMap<String, u64> {
+        &self.channel_subscribers
+    }
+
+    /// Counts read after the inputs were.
+    pub fn add_channel_subscribers(&mut self, counts: HashMap<String, u64>) {
+        self.channel_subscribers.extend(counts);
     }
 
     #[must_use]
@@ -189,6 +222,11 @@ impl Exclusions {
             || self.shorts.contains(card.id())
             || self.unplayable.contains(card.id())
             || self.channels.contains(card.channel_id())
+            || self.min_subscribers.is_some_and(|min| {
+                self.channel_subscribers
+                    .get(card.channel_id())
+                    .is_some_and(|subscribers| *subscribers < min)
+            })
             || (self.hide_music_videos && looks_like_music_video(&card.video))
             || self
                 .matchers
@@ -257,6 +295,14 @@ impl Inputs {
         let pin_fresh_subs = pins_fresh_subs(pool).await;
         let hide_music_videos = hides_music_videos(pool).await;
         let min_views = min_views(pool).await;
+        let min_subscribers = min_subscribers(pool).await;
+        let channel_subscribers = if min_subscribers.is_some() {
+            crate::db::channel_subscribers::fresh(pool, i64::try_from(now_ms).unwrap_or(i64::MAX))
+                .await
+                .unwrap_or_default()
+        } else {
+            HashMap::new()
+        };
         if !subscriptions_on_home {
             channels.extend(subscriptions.names.keys().cloned());
         }
@@ -274,6 +320,8 @@ impl Inputs {
                 age_limit: max_video_age_ms.map(|max_age_ms| (max_age_ms, now_ms)),
                 hide_music_videos,
                 min_views,
+                min_subscribers,
+                channel_subscribers,
                 matchers: BlockedMatchers::new(&brain.blocked_topics, &spec),
                 spec,
             },
