@@ -1,14 +1,16 @@
 name: SaveTube Windows installer
 
 # Builds only the Windows x64 installer, started by hand (Actions → Run workflow, or
-# `gh workflow run windows-exe.yml`). Runs one at a time and never cancels a build in progress,
-# and always saves its Rust cache, so a rebuild after small changes takes minutes, not an hour.
+# `gh workflow run windows-exe.yml`). A newer build cancels the one in progress, so the latest
+# code is never waiting behind a stale build. The version (nightly.<run number>) comes from the
+# run number, so a cancelled run only leaves a gap in the numbers. The Rust cache is saved by
+# every build that finishes; a cancelled build keeps using the last saved one.
 on:
   workflow_dispatch:
 
 concurrency:
   group: windows-exe
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: read
