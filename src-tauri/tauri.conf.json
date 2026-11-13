@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Flow",
+  "productName": "SaveTube",
   "version": "0.1.0-beta3",
-  "identifier": "io.github.aedev.flow.desktop",
+  "identifier": "uz.univel.savetube.desktop",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Flow",
+        "title": "SaveTube",
         "width": 1280,
         "height": 800,
         "minWidth": 960,
@@ -32,12 +32,12 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["flow"]
+        "schemes": ["savetube"]
       }
     },
     "updater": {
       "endpoints": [
-        "https://github.com/Flow-Tube/Flow-Desktop/releases/latest/download/latest.json"
+        "https://github.com/goldendevuz/flow-desktop/releases/latest/download/latest.json"
       ],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ3NjQyOEVCREQxMjY5MjkKUldRcGFSTGQ2eWhrMThHMzB3Y29Tc3JsTFhpOGJqR1lGY0M0Z01DaVlzL01zNXhLTWUzUDdxcFIK",
       "windows": {

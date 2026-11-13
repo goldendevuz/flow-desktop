@@ -12,14 +12,14 @@ const version = `${baseVersion}${separator}nightly.${runNumber}`;
 
 const nightlyConfig = {
   $schema: "https://schema.tauri.app/config/2",
-  productName: "Flow Nightly",
+  productName: "SaveTube",
   version,
-  identifier: "io.github.aedev.flow.desktop.nightly",
+  identifier: "uz.univel.savetube.desktop",
   bundle: {
     createUpdaterArtifacts: false,
-    shortDescription: "Nightly testing build of Flow Desktop.",
+    shortDescription: "SaveTube desktop client (nightly build).",
     longDescription:
-      "An automatically generated testing build of Flow Desktop. Nightly builds use isolated application data and may be unstable.",
+      "SaveTube desktop client, an automatically generated build. It keeps its own application data, separate from Flow.",
   },
 };
 
@@ -28,4 +28,4 @@ writeFileSync(
   `${JSON.stringify(nightlyConfig, null, 2)}\n`,
 );
 
-console.log(`Generated Flow Nightly configuration for version ${version}`);
+console.log(`Generated SaveTube configuration for version ${version}`);
