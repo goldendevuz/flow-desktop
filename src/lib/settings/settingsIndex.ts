@@ -186,6 +186,7 @@ export const SETTINGS_INDEX: SettingEntry[] = [
     { title: "settings_home_pin_fresh_subs", summary: "settings_home_pin_fresh_subs_desc", keywords: ["pin", "fresh", "new uploads"] },
     { title: "settings_home_hide_music_videos", summary: "settings_home_hide_music_videos_desc", keywords: ["music video", "clip", "lyrics", "vevo", "no music"] },
     { title: "settings_home_refresh_on_reselect", summary: "settings_home_refresh_on_reselect_desc" },
+    { title: "settings_home_min_subscribers", summary: "settings_home_min_subscribers_desc", keywords: ["subscribers", "small channels", "g1", "g8"] },
     { title: "settings_home_min_views", summary: "settings_home_min_views_desc", keywords: ["views", "low views", "popular"] },
     { title: "settings_home_max_age", summary: "settings_home_max_age_desc" },
     { title: "settings_comments", summary: "settings_comments_desc" },

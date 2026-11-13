@@ -60,6 +60,8 @@ table	music_content_edges	CACHE	private	Joined with watch_history; stays beside 
 table	video_cache	CACHE	-	Public video metadata; kept in each profile's file
 table	dearrow_cache	CACHE	-	Public crowd data; kept in each profile's file
 table	known_shorts	CACHE	-	Fact about a video; kept in each profile's file
+table	home_channel_subscribers	CACHE	-	Fact about a channel; kept in each profile's file
+setting	home_min_subscribers	PROFILE	settings	Hide channels with fewer subscribers than this from Home
 table	unplayable_videos	CACHE	-	Fact about a video; kept in each profile's file
 table	video_kind_checks	CACHE	-	Fact about a video; kept in each profile's file
 table	music_home_sections	DEAD	-	No code reads or writes it
