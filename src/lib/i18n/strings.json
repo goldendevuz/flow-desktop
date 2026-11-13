@@ -122,6 +122,7 @@
   "home_feed_why": "Why you see this",
   "continue_watching_progress": "%s% watched",
   "home_origin_subscription": "From a channel you follow",
+  "home_origin_subscription_named": "From %s, a channel you follow",
   "home_origin_related": "Related to %s",
   "home_origin_related_watched": "Related to a video you watched",
   "home_origin_search": "From a search for %s",

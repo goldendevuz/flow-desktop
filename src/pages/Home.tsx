@@ -130,7 +130,7 @@ export const Home: React.FC<HomeProps> = ({ onPlay, onAddToQueue }) => {
   const reasonOf = useCallback(
     (video: VideoSummary) => {
       const origin = snapshot.origins[video.id];
-      return origin ? homeOriginLabel(origin) : undefined;
+      return origin ? homeOriginLabel(origin, video.channelName) : undefined;
     },
     [snapshot.origins],
   );
