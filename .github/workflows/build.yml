@@ -1,9 +1,10 @@
 name: Build and test
 
 on:
-  push:
-    branches:
-      - main
+  # No build on every push to main: each push cancelled the run before it finished, so the Rust
+  # cache was never saved and every build started cold. Windows installers come from
+  # windows-exe.yml, started by hand; this full matrix runs on pull requests (checks only), on
+  # demand and weekly.
   pull_request:
   workflow_dispatch:
   schedule:
