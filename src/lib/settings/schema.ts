@@ -734,7 +734,7 @@ export const SETTING_DEFINITIONS = [
   bool(SETTINGS.HOME_HIDE_MUSIC_VIDEOS, "content", false, "wired"),
   bool(SETTINGS.REFRESH_HOME_ON_RESELECT, "content", true, "wired"),
   str(SETTINGS.HOME_MAX_VIDEO_AGE, "content", "0", "wired", ["0", "24", "72", "168", "720", "4320", "8760"]),
-  str(SETTINGS.HOME_MIN_VIEWS, "content", "0", "wired", ["0", "100", "1000", "10000", "100000"]),
+  str(SETTINGS.HOME_MIN_VIEWS, "content", "0", "wired", ["0", "10", "100", "1000", "10000", "100000", "1000000", "10000000", "100000000"]),
   bool(SETTINGS.COMMENTS_ENABLED, "content", true, "wired"),
   bool(SETTINGS.NOTES_ENABLED, "content", true, "wired"),
   bool(SETTINGS.CHANNEL_NOTES_ENABLED, "content", true, "wired"),

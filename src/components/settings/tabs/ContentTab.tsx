@@ -115,10 +115,14 @@ export function ContentTab() {
         <SettingItem title={getString('settings_home_min_views')} description={getString('settings_home_min_views_desc')} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_VIEWS)}>
           <Select value={homeMinViews} onChange={setHomeMinViews} disabled={isSettingDisabledUntilWired(SETTINGS.HOME_MIN_VIEWS)} options={[
             { value: '0', label: getString('settings_home_min_views_off') },
+            { value: '10', label: getString('settings_home_min_views_10') },
             { value: '100', label: getString('settings_home_min_views_100') },
             { value: '1000', label: getString('settings_home_min_views_1k') },
             { value: '10000', label: getString('settings_home_min_views_10k') },
             { value: '100000', label: getString('settings_home_min_views_100k') },
+            { value: '1000000', label: getString('settings_home_min_views_1m') },
+            { value: '10000000', label: getString('settings_home_min_views_10m') },
+            { value: '100000000', label: getString('settings_home_min_views_100m') },
           ]} />
         </SettingItem>
       </SettingsGroup>
