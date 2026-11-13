@@ -4,7 +4,7 @@ import { useBlockedKeywordMatch, useFeedActionsStore } from '../../store/useFeed
 import { useBlockedRevealStore } from '../../lib/blockedContent';
 import { BlockedVideoCard } from './BlockedVideoCard';
 import { useLiveStore } from '../../store/useLiveStore';
-import { Plus, Ban, Bell, BellRing, Check, Info, ListStart, MoreVertical, Trash2, GripHorizontal, Sparkles, Eye, EyeOff, Clock, ListPlus, ListVideo, Download, User, Share2, UserPlus, UserMinus } from 'lucide-react';
+import { Plus, Ban, Bell, BellRing, Check, Info, ListStart, MoreVertical, Trash2, GripHorizontal, Sparkles, Eye, EyeOff, Clock, ListPlus, ListVideo, Download, User, Share2, UserPlus, UserMinus, X } from 'lucide-react';
 import type { VideoSummary } from '../../types/video';
 import { Button } from '../ui/Button';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -145,6 +145,7 @@ function VideoCardComponent({
   const subscribe = useSubscriptionStore((s) => s.subscribe);
   const unsubscribe = useSubscriptionStore((s) => s.unsubscribe);
   const notInterested = useFeedActionsStore((s) => s.notInterested);
+  const hideVideo = useFeedActionsStore((s) => s.hideVideo);
   const blockChannelAction = useFeedActionsStore((s) => s.blockChannel);
   const markWatched = useFeedActionsStore((s) => s.markWatched);
   const markUnwatched = useFeedActionsStore((s) => s.markUnwatched);
@@ -596,6 +597,14 @@ function VideoCardComponent({
       icon: <Info size={16} />,
       group: "go",
       onSelect: () => setShowDetails(true),
+    },
+    {
+      // Only takes this video off the feeds: nothing is learned from it and its channel is left alone.
+      id: "hide-video",
+      label: getString("menu_hide_video"),
+      icon: <X size={16} />,
+      group: "feed",
+      onSelect: () => hideVideo(video.id),
     },
     {
       id: "not-interested",
