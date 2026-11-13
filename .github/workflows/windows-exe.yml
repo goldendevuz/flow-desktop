@@ -53,11 +53,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate the build configuration
-        env:
-          # The full build workflow reached nightly.33; this workflow has its own run count, so
-          # it starts at 100 to keep versions going up (the installer will not replace a newer one).
-          BUILD_NUMBER: ${{ github.run_number + 100 }}
-        run: node scripts/write-nightly-config.mjs
+        shell: bash
+        # The full build workflow reached nightly.33; this workflow has its own run count, so it
+        # starts at 100 to keep versions going up (the installer will not replace a newer one).
+        run: |
+          export BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))
+          node scripts/write-nightly-config.mjs
 
       - name: Build the installer
         env:
