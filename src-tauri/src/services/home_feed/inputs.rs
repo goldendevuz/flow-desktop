@@ -233,9 +233,10 @@ impl Exclusions {
             || self.unplayable.contains(card.id())
             || self.channels.contains(card.channel_id())
             || self.min_subscribers.is_some_and(|min| {
+                // A channel whose size is not known yet stays hidden: it shows once looked up.
                 self.channel_subscribers
                     .get(card.channel_id())
-                    .is_some_and(|subscribers| *subscribers < min)
+                    .is_none_or(|subscribers| *subscribers < min)
             })
             || (self.hide_music_videos && looks_like_music_video(&card.video))
             || self

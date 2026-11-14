@@ -217,7 +217,7 @@ impl HomeFeedService {
                 && !min_subscribers.is_some_and(|min| {
                     known_subscribers
                         .get(card.channel_id())
-                        .is_some_and(|subscribers| *subscribers < min)
+                        .is_none_or(|subscribers| *subscribers < min)
                 })
                 && !(hide_music_videos && music_video::looks_like_music_video(&card.video))
         };

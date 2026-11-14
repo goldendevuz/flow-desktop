@@ -32,7 +32,7 @@ use crate::services::youtube_service::YoutubeService;
 const CHANNEL_LOOKUPS_PER_LOAD: usize = 60;
 const CHANNEL_LOOKUP_CONCURRENCY: usize = 12;
 /// Channels read before a load is painted, so a channel below the minimum never shows at all.
-const CHANNEL_LOOKUPS_BEFORE_PAINT: usize = 80;
+const CHANNEL_LOOKUPS_BEFORE_PAINT: usize = 150;
 const CHANNEL_LOOKUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(6);
 const WAVE1_QUERIES: usize = 3;
 const MAX_RELATED_SEEDS: usize = 4;
@@ -712,7 +712,7 @@ impl HomeFeedService {
 
     /// With a minimum subscriber count set, the channels on screen are looked up (a few new ones
     /// per load; counts are kept for a month), and a card from a channel below the minimum leaves
-    /// the feed, which is saved again without it. Channels already known never appear at all.
+    /// the feed, which is saved again without it. Channels not yet known stay hidden.
     async fn drop_small_channels(
         &self,
         app: &AppHandle,
