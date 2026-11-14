@@ -30,7 +30,9 @@ use crate::services::youtube_service::YoutubeService;
 /// loads look up few. (Twelve left most of a page unchecked, and the filter only caught a few
 /// channels per refresh.)
 const CHANNEL_LOOKUPS_PER_LOAD: usize = 60;
-const CHANNEL_LOOKUP_CONCURRENCY: usize = 4;
+const CHANNEL_LOOKUP_CONCURRENCY: usize = 12;
+/// Channels read before a load is painted, so a channel below the minimum never shows at all.
+const CHANNEL_LOOKUPS_BEFORE_PAINT: usize = 80;
 const CHANNEL_LOOKUP_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(6);
 const WAVE1_QUERIES: usize = 3;
 const MAX_RELATED_SEEDS: usize = 4;
@@ -175,7 +177,7 @@ impl HomeFeedService {
             self.settle_without_feed(app, generation, Some(LOCAL_DATA_FAILED));
             return;
         };
-        let Ok(inputs) = Inputs::load(&pool, &brain, now).await else {
+        let Ok(mut inputs) = Inputs::load(&pool, &brain, now).await else {
             self.settle_without_feed(app, generation, Some(LOCAL_DATA_FAILED));
             return;
         };
@@ -198,6 +200,23 @@ impl HomeFeedService {
         let nothing_reached = searches_failed && related.is_empty();
         report_searches(&rec, &searches).await;
 
+        if inputs.exclusions.min_subscribers().is_some() {
+            let candidates: Vec<String> = searches
+                .iter()
+                .flat_map(|(_, cards)| cards.iter())
+                .chain(related.iter().map(|c| &c.card))
+                .map(|card| card.channel_id().to_string())
+                .collect();
+            let counts = lookup_subscribers(
+                &yt,
+                &pool,
+                &inputs.exclusions,
+                candidates,
+                CHANNEL_LOOKUPS_BEFORE_PAINT,
+            )
+            .await;
+            inputs.exclusions.add_channel_subscribers(counts);
+        }
         let taste = TasteProfile::of(&brain, &classify_persona(&brain));
         let recently_shown = rec.recently_shown().await;
         let followed = inputs.boosted_channels();
@@ -711,46 +730,15 @@ impl HomeFeedService {
                 on_screen.push(id.to_string());
             }
         }
-        let missing: Vec<String> = on_screen
-            .iter()
-            .filter(|id| {
-                !after
-                    .inputs
-                    .exclusions
-                    .channel_subscribers()
-                    .contains_key(*id)
-            })
-            .take(CHANNEL_LOOKUPS_PER_LOAD)
-            .cloned()
-            .collect();
-        if !missing.is_empty() {
-            let read = crate::api::http::bounded_join(
-                missing,
-                CHANNEL_LOOKUP_CONCURRENCY,
-                |id| async move {
-                    let details =
-                        tokio::time::timeout(CHANNEL_LOOKUP_TIMEOUT, yt.get_channel_details(&id))
-                            .await;
-                    let count = details
-                        .ok()
-                        .and_then(Result::ok)
-                        .and_then(|channel| channel.subscriber_count);
-                    (id, count)
-                },
-            )
-            .await;
-            let counts: HashMap<String, u64> = read
-                .into_iter()
-                .filter_map(|(id, count)| count.map(|count| (id, count)))
-                .collect();
-            let _ = crate::db::channel_subscribers::remember(
-                pool,
-                &counts,
-                i64::try_from(now_ms()).unwrap_or(i64::MAX),
-            )
-            .await;
-            after.inputs.exclusions.add_channel_subscribers(counts);
-        }
+        let counts = lookup_subscribers(
+            yt,
+            pool,
+            &after.inputs.exclusions,
+            on_screen.clone(),
+            CHANNEL_LOOKUPS_PER_LOAD,
+        )
+        .await;
+        after.inputs.exclusions.add_channel_subscribers(counts);
         let known = after.inputs.exclusions.channel_subscribers();
         let small: HashSet<String> = on_screen
             .into_iter()
@@ -1234,4 +1222,50 @@ fn followed_channels(followed: &HashSet<String>) -> Vec<String> {
 /// Videos the viewer hid never open a related lane.
 pub(super) fn inputs_disliked(inputs: &Inputs) -> HashSet<String> {
     inputs.exclusions.hidden_videos().clone()
+}
+
+/// Reads the subscriber counts of up to `limit` channels not yet known, keeps them for a month,
+/// and returns what was read. A channel that does not answer in time stays unknown.
+async fn lookup_subscribers(
+    yt: &YoutubeService,
+    pool: &SqlitePool,
+    known: &super::inputs::Exclusions,
+    channels: Vec<String>,
+    limit: usize,
+) -> HashMap<String, u64> {
+    let mut seen: HashSet<String> = HashSet::new();
+    let missing: Vec<String> = channels
+        .into_iter()
+        .filter(|id| {
+            !id.is_empty()
+                && !known.channel_subscribers().contains_key(id)
+                && seen.insert(id.clone())
+        })
+        .take(limit)
+        .collect();
+    if missing.is_empty() {
+        return HashMap::new();
+    }
+    let read =
+        crate::api::http::bounded_join(missing, CHANNEL_LOOKUP_CONCURRENCY, |id| async move {
+            let details =
+                tokio::time::timeout(CHANNEL_LOOKUP_TIMEOUT, yt.get_channel_details(&id)).await;
+            let count = details
+                .ok()
+                .and_then(Result::ok)
+                .and_then(|channel| channel.subscriber_count);
+            (id, count)
+        })
+        .await;
+    let counts: HashMap<String, u64> = read
+        .into_iter()
+        .filter_map(|(id, count)| count.map(|count| (id, count)))
+        .collect();
+    let _ = crate::db::channel_subscribers::remember(
+        pool,
+        &counts,
+        i64::try_from(now_ms()).unwrap_or(i64::MAX),
+    )
+    .await;
+    counts
 }
