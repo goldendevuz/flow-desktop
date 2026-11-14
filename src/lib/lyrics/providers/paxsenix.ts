@@ -146,7 +146,7 @@ function lyricsQuality(entries: LyricsEntry[]): number {
 }
 
 async function fetchLyrics(appleId: string): Promise<LyricsEntry[]> {
-  const res = await lyricsHttpGet(`${PAX_LYRICS}?id=${enc(appleId)}`, { "User-Agent": "Flow Desktop" });
+  const res = await lyricsHttpGet(`${PAX_LYRICS}?id=${enc(appleId)}`, { "User-Agent": "SaveTube" });
   if (res.status === 404) return [];
   if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
   const data = JSON.parse(res.body) as PaxLyrics;

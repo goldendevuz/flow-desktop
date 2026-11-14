@@ -83,7 +83,7 @@ struct ReportParts<'a> {
 
 fn build_report(parts: &ReportParts) -> String {
     let report = format!(
-        "Flow crash report\nVersion: {}\nOS: {} {}\nTime: {}\nThread: {}\nMessage: {}\nWhere: {}\n\nBacktrace:\n{}\n",
+        "SaveTube crash report\nVersion: {}\nOS: {} {}\nTime: {}\nThread: {}\nMessage: {}\nWhere: {}\n\nBacktrace:\n{}\n",
         parts.version,
         std::env::consts::OS,
         std::env::consts::ARCH,
@@ -298,7 +298,7 @@ mod tests {
             location: "src/lib.rs:1:2",
             backtrace: &"é".repeat(MAX_REPORT_BYTES),
         });
-        assert!(report.starts_with("Flow crash report\nVersion: 1.2.3\n"));
+        assert!(report.starts_with("SaveTube crash report\nVersion: 1.2.3\n"));
         assert!(report.contains("Message: index out of bounds\nWhere: src/lib.rs:1:2\n"));
         assert!(report.len() <= MAX_REPORT_BYTES);
     }

@@ -486,7 +486,7 @@ impl FlowPersona {
     pub fn description(&self) -> &str {
         match self {
             Self::Initiate => "Just getting started. Your profile is still forming.",
-            Self::Audiophile => "You use Flow mostly for Music. The vibe is everything.",
+            Self::Audiophile => "You use SaveTube mostly for Music. The vibe is everything.",
             Self::Livewire => "You love the raw energy of Livestreams and premieres.",
             Self::NightOwl => "You thrive in the dark. Most watching happens after midnight.",
             Self::Binger => "Once you start, you can't stop. Massive content waves.",

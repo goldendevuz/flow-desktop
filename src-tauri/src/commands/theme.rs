@@ -25,7 +25,7 @@ fn theme_file_path(app: &AppHandle) -> Result<PathBuf, ErrorResponse> {
         .map(|dir| dir.join(theme_file::FILE_NAME))
         .map_err(|error| {
             ErrorResponse::from(AppError::Internal(format!(
-                "Could not find Flow's config folder: {error}"
+                "Could not find SaveTube's config folder: {error}"
             )))
         })
 }

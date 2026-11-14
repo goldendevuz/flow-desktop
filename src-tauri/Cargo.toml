@@ -6,7 +6,7 @@ authors = ["A-EDev"]
 edition = "2024"
 default-run = "flow"
 license = "GPL-3.0-only"
-repository = "https://github.com/Flow-Tube/Flow-Desktop"
+repository = "https://github.com/goldendevuz/savetube-desktop"
 
 [lib]
 name = "flow_desktop_lib"

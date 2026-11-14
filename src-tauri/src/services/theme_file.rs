@@ -15,12 +15,12 @@ pub const MAX_BYTES: u64 = 256 * 1024;
 /// What Flow writes when the user asks for a starting point. It doubles as the
 /// documentation, since the people who want this file are editing it by hand or
 /// turning it into a template.
-pub const STARTER: &str = r"/* Flow theme file. Flow reloads this file whenever it changes.
+pub const STARTER: &str = r"/* SaveTube theme file. SaveTube reloads this file whenever it changes.
    Select it in Settings > Appearance > Theme file.
 
    Colours: any CSS colour works (hex, rgb(), hsl(), oklch(), color-mix()).
-   Leave a line out to keep Flow's default for it.
-   --flow-scheme picks light or dark controls; without it Flow decides
+   Leave a line out to keep SaveTube's default for it.
+   --flow-scheme picks light or dark controls; without it SaveTube decides
    from how bright --flow-background is.
    Remote url(), @import and @font-face are ignored. */
 :root {
@@ -35,7 +35,7 @@ pub const STARTER: &str = r"/* Flow theme file. Flow reloads this file whenever 
   --flow-outline: #343434;
   --flow-error: #ef5350;
 
-  /* Optional: Flow mixes these from the colours above when they are left out.
+  /* Optional: SaveTube mixes these from the colours above when they are left out.
   --flow-surface-container-low: #171717;
   --flow-surface-container: #1d1d1d;
   --flow-surface-container-high: #242424;
@@ -43,8 +43,8 @@ pub const STARTER: &str = r"/* Flow theme file. Flow reloads this file whenever 
   */
 }
 
-/* Rules below this line style Flow directly. They can stop matching
-   when Flow's layout changes in an update. */
+/* Rules below this line style SaveTube directly. They can stop matching
+   when SaveTube's layout changes in an update. */
 ";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]

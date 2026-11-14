@@ -7,15 +7,15 @@ import { copyText } from "./clipboard";
 import { getString } from "./i18n/index";
 import { openExternal } from "./openExternal";
 
-export const NEW_ISSUE_URL = "https://github.com/Flow-Tube/Flow-Desktop/issues/new";
+export const NEW_ISSUE_URL = "https://github.com/goldendevuz/savetube-desktop/issues/new";
 export const ISSUE_TEMPLATE = "bug_report.yml";
 
 /** A browser refuses or cuts a much longer link, so the page copies the full report instead. */
 const MAX_URL_LOG_CHARS = 1500;
 const MAX_URL_ACTUAL_CHARS = 300;
 const TITLE_MESSAGE_CHARS = 80;
-const UNKNOWN_STEPS = "Not sure. Flow closed by itself and offered this report at the next launch.";
-const EXPECTED = "Flow keeps running.";
+const UNKNOWN_STEPS = "Not sure. SaveTube closed by itself and offered this report at the next launch.";
+const EXPECTED = "SaveTube keeps running.";
 
 export interface CrashSummary {
   version: string | null;
@@ -46,7 +46,7 @@ export function crashIssueUrl(report: string): string {
     ["os-version", summary.os],
     ["steps", UNKNOWN_STEPS],
     ["expected", EXPECTED],
-    ["actual", `Flow crashed with ${error}`.slice(0, MAX_URL_ACTUAL_CHARS)],
+    ["actual", `SaveTube crashed with ${error}`.slice(0, MAX_URL_ACTUAL_CHARS)],
     ["logs", report.slice(0, MAX_URL_LOG_CHARS)],
   ];
   const query = fields

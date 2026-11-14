@@ -106,7 +106,7 @@ function createTheme(seed: PaletteSeed): ThemeDefinition {
 
 const seeds: PaletteSeed[] = [
   {
-    id: "default", name: "Flow Default", descriptionKey: "theme_description_default",
+    id: "default", name: "SaveTube Default", descriptionKey: "theme_description_default",
     light: { primary: "#ff0000", onPrimary: "#ffffff", secondary: "#606060", background: "#ffffff", surface: "#f3f3f3", onSurface: "#111111", onSurfaceVariant: "#5f5f5f", outline: "#d7d7d7", error: "#d32f2f" },
     dark: { primary: "#ff0000", onPrimary: "#ffffff", secondary: "#aaaaaa", background: "#0f0f0f", surface: "#1d1d1d", onSurface: "#f4f4f4", onSurfaceVariant: "#b8b8b8", outline: "#343434", error: "#ef5350" },
   },

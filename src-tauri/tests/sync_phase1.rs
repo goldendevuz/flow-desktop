@@ -17,7 +17,7 @@ use flow_desktop_lib::sync::qr::{QrError, QrPayload};
 #[test]
 fn device_ids_are_unique_and_name_is_friendly() {
     assert_ne!(new_device_id(), new_device_id());
-    assert!(default_device_name().starts_with("Flow Desktop ("));
+    assert!(default_device_name().starts_with("SaveTube ("));
 }
 
 #[test]

@@ -31,7 +31,7 @@ async fn migrations_apply_and_device_identity_is_stable() {
     assert_eq!(id1, id2, "device id is generated once and persisted");
 
     let name = ledger::device_name(&pool).await.unwrap();
-    assert!(name.starts_with("Flow Desktop ("));
+    assert!(name.starts_with("SaveTube ("));
 }
 
 #[tokio::test]

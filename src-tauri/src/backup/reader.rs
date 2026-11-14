@@ -40,7 +40,7 @@ const BACKUP_DEVICE: &str = "android-backup";
 pub enum ReadError {
     #[error("the file is too large")]
     TooLarge,
-    #[error("the archive has no Flow backup in it")]
+    #[error("the archive has no SaveTube backup in it")]
     NoBackup,
     #[error("{0}")]
     Io(#[from] io::Error),

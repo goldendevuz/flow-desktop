@@ -332,8 +332,8 @@ fn info_element(duration_ms: i64, title: Option<String>) -> MatroskaSpec {
     if let Some(title) = title.filter(|title| !title.is_empty()) {
         children.push(MatroskaSpec::Title(title));
     }
-    children.push(MatroskaSpec::MuxingApp("Flow".to_string()));
-    children.push(MatroskaSpec::WritingApp("Flow".to_string()));
+    children.push(MatroskaSpec::MuxingApp("SaveTube".to_string()));
+    children.push(MatroskaSpec::WritingApp("SaveTube".to_string()));
     MatroskaSpec::Info(Master::Full(children))
 }
 
@@ -423,7 +423,7 @@ fn tags_element(metadata: &EmbeddedMetadata) -> MatroskaSpec {
     push("COMMENT", tags.source_url());
     push("URL", tags.source_url());
     push("LYRICS", tags.lyrics.clone());
-    push("ENCODER", Some("Flow".to_string()));
+    push("ENCODER", Some("SaveTube".to_string()));
     for (name, value) in tags.flow_fields() {
         push(&format!("FLOW_{}", name.to_ascii_uppercase()), Some(value));
     }
