@@ -176,6 +176,12 @@ inherits = "release"
 lto = false
 codegen-units = 16
 
+# Test installers only: the app's own code is compiled with light optimisation (dependencies keep
+# the release settings and stay cached), which cuts the compile time. Production uses `release`.
+[profile.fast.package.flow]
+opt-level = 1
+debug = false
+
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util"] }
 wiremock = "0.6"
