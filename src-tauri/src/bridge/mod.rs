@@ -2,7 +2,7 @@
 //!
 //! A tiny fixed-port HTTP server on `127.0.0.1` that lets the extension hand a
 //! video off to a *running* Flow instance silently (no OS "Open Flow?" prompt)
-//! and detect whether Flow is installed at all (`/flow/ping`). It is the
+//! and detect whether Flow is installed at all (`/savetube/ping`). It is the
 //! sibling of the `flow://` deep link: the deep link *launches* Flow when it is
 //! closed; this server serves it while it is already open.
 //!
@@ -109,16 +109,19 @@ async fn handle_connection(mut socket: TcpStream, app: &AppHandle) -> std::io::R
         return write_response(&mut socket, 405, "Method Not Allowed", cors, "{}").await;
     }
 
-    match req.path.as_str() {
+    // The SaveTube extension asks under `/savetube/`; the old `/flow/` paths still reach the same handlers.
+    let path = req.path.replacen("/savetube/", "/flow/", 1);
+    match path.as_str() {
         "/flow/ping" => {
+            // `app` names this app, so an extension never takes the original Flow (or the reverse) for SaveTube.
             let body = format!(
-                r#"{{"app":"flow","version":"{}"}}"#,
+                r#"{{"app":"savetube","version":"{}"}}"#,
                 env!("CARGO_PKG_VERSION")
             );
             write_response(&mut socket, 200, "OK", cors, &body).await
         }
         "/flow/watch" | "/flow/download" | "/flow/music" | "/flow/music-download" => {
-            let action = &req.path["/flow/".len()..];
+            let action = &path["/flow/".len()..];
             match build_handoff_url(action, &req.query) {
                 Some(url) => {
                     dispatch(app, url);
