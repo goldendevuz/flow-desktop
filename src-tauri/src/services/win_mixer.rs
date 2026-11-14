@@ -50,7 +50,7 @@ pub fn start(app: &AppHandle) {
             .config()
             .product_name
             .as_deref()
-            .unwrap_or("Flow")
+            .unwrap_or("SaveTube")
             .into(),
         // tauri-build embeds the app icon under resource ID 32512. Naming it by ID rather than
         // by index lets EarTrumpet load it, as well as the Windows mixer.
@@ -60,7 +60,7 @@ pub fn start(app: &AppHandle) {
         .name("win-mixer".into())
         .spawn(move || {
             if let Err(error) = watch_devices(&label) {
-                tracing::warn!(%error, "Failed to label Flow in the volume mixer");
+                tracing::warn!(%error, "Failed to label SaveTube in the volume mixer");
             }
         });
     if let Err(error) = spawned {

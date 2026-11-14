@@ -25,7 +25,7 @@ pub fn listens_json(listen_type: &str, entries: &[ScrobbleEntry]) -> Value {
                     json!(u64::from(entry.duration_sec) * 1000),
                 );
             }
-            info.insert("submission_client".into(), json!("Flow Desktop"));
+            info.insert("submission_client".into(), json!("SaveTube"));
             info.insert(
                 "submission_client_version".into(),
                 json!(env!("CARGO_PKG_VERSION")),

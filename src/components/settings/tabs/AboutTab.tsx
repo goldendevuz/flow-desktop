@@ -1,7 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { ChevronRight, ExternalLink, FileText, Globe, Heart, History, Scale, Code2, Cpu, Monitor, User, Package, Fingerprint, Info, RefreshCw } from 'lucide-react';
+import { ChevronRight, ExternalLink, FileText, Globe, History, Scale, Code2, Cpu, Monitor, User, Package, Fingerprint, Info, RefreshCw } from 'lucide-react';
 import { SettingsGroup } from '../SettingsGroup';
 import Logo from '../../common/Logo';
 import { Button } from '../../ui/Button';
@@ -13,8 +12,6 @@ import { getSystemMetadata, type SystemMetadata } from '../../../lib/systemMetad
 import { useUpdaterStore } from '../../../store/useUpdaterStore';
 import { updateBlockedStringKey } from '../../../lib/updateSupport';
 import { useUiStore } from '../../../store/useUiStore';
-import { OPEN_COLLECTIVE_URL, PATREON_URL } from '../../../lib/supportLinks';
-import { OpenCollectiveIcon, PatreonIcon } from '../../ui/SupportPlatformIcons';
 import { ChangelogDialog } from '../about/ChangelogDialog';
 import { NoticesDialog } from '../about/NoticesDialog';
 
@@ -57,7 +54,6 @@ const sourceLabel = (source?: AppMetadata['source'] | SystemMetadata['source']) 
 };
 
 export function AboutTab() {
-  const navigate = useNavigate();
   const [appMetadata, setAppMetadata] = useState<AppMetadata | null>(null);
   const [systemMetadata, setSystemMetadata] = useState<SystemMetadata | null>(null);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
@@ -163,18 +159,10 @@ export function AboutTab() {
       </SettingsGroup>
 
       <SettingsGroup title={getString('settings_group_contact')}>
-        <LinkRow icon={<GithubIcon />} label={getString('about_source_code')} value="goldendevuz/flow-desktop" href="https://github.com/goldendevuz/flow-desktop" />
+        <LinkRow icon={<GithubIcon />} label={getString('about_source_code')} value="goldendevuz/savetube-desktop" href="https://github.com/goldendevuz/savetube-desktop" />
         <LinkRow icon={<User size={16} />} label={getString('about_based_on')} value="Flow by A-EDev" href="https://github.com/Flow-Tube/Flow-Desktop" />
       </SettingsGroup>
 
-      <SettingsGroup title={getString('settings_group_support')}>
-        <LinkRow icon={<OpenCollectiveIcon />} label={getString('settings_donate_open_collective')} value="" href={OPEN_COLLECTIVE_URL} />
-        <LinkRow icon={<PatreonIcon />} label={getString('settings_donate_patreon')} value="" href={PATREON_URL} />
-        <LinkRow icon={<Heart size={16} />} label={getString('settings_donate_all_ways')} value="" onSelect={() => navigate('/support')} />
-        <div className="px-5 py-4">
-          <p className="text-xs text-chrome-neutral-400 leading-relaxed">{getString('settings_donate_desc')}</p>
-        </div>
-      </SettingsGroup>
 
       <SettingsGroup title={getString('settings_group_legal')}>
         <LinkRow icon={<Scale size={16} />} label={getString('settings_license')} value="GPL-3.0" />

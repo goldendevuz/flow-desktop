@@ -35,7 +35,7 @@ SaveTube uses YouTube's public data without an official API, so it can stop work
 
 ## Install
 
-Download the installer from the [latest release](https://github.com/goldendevuz/flow-desktop/releases/latest) and run it. New versions install over the old one and keep your data. Builds also come from [GitHub Actions](https://github.com/goldendevuz/flow-desktop/actions/workflows/windows-exe.yml) (Run workflow, then download the artifact).
+Download the installer from the [latest release](https://github.com/goldendevuz/savetube-desktop/releases/latest) and run it. New versions install over the old one and keep your data. Builds also come from [GitHub Actions](https://github.com/goldendevuz/savetube-desktop/actions/workflows/windows-exe.yml) (Run workflow, then download the artifact).
 
 ## Privacy
 

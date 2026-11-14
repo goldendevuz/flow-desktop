@@ -1019,7 +1019,7 @@ pub fn run() {
             scrobble_retry_keychain
         ])
         .build(context)
-        .expect("error while building Flow Desktop")
+        .expect("error while building SaveTube")
         .run(|app_handle, event| {
             #[cfg(target_os = "macos")]
             if let tauri::RunEvent::Reopen { .. } = event {

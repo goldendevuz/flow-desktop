@@ -212,7 +212,7 @@ pub fn validate_library_file(
     }
     if !resolved.is_file() || !is_allowed_type(&resolved) {
         return Err(AppError::LocalFileRefused(
-            "That isn't a file Flow can open".into(),
+            "That isn't a file SaveTube can open".into(),
         ));
     }
     Ok(resolved)

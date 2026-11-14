@@ -38,14 +38,14 @@ pub async fn start(app: AppHandle) {
         Some(listener) => listener,
         None => {
             warn!(
-                "Flow extension bridge: no free port in {BRIDGE_PORTS:?}; extension silent mode disabled"
+                "SaveTube extension bridge: no free port in {BRIDGE_PORTS:?}; extension silent mode disabled"
             );
             return;
         }
     };
 
     if let Ok(addr) = listener.local_addr() {
-        info!("Flow extension bridge listening on {addr}");
+        info!("SaveTube extension bridge listening on {addr}");
     }
 
     loop {

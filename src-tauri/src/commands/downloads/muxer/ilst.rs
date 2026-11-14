@@ -5,7 +5,7 @@ use super::boxes::{container, full_box, mp4_box};
 use crate::commands::downloads::tags::{DownloadTags, TAG_NAMESPACE};
 
 pub const MAX_COVER_BYTES: usize = 1_000_000;
-const ENCODER_NAME: &str = "Flow";
+const ENCODER_NAME: &str = "SaveTube";
 const DATA_IMPLICIT: u32 = 0;
 const DATA_UTF8: u32 = 1;
 const DATA_JPEG: u32 = 13;

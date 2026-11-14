@@ -35,7 +35,7 @@ pub fn resolve_destination_directory(
     .or_else(|_| app.path().download_dir())
     .map_err(|error| download_error(format!("Could not resolve a download folder: {error}")))?;
 
-    Ok(base.join("Flow"))
+    Ok(base.join("SaveTube"))
 }
 
 /// The file name (without extension): `Artist - Title` for a song, `NN - Title`
@@ -86,7 +86,7 @@ pub fn sanitize_file_stem(title: &str) -> String {
         .trim_end_matches(['.', ' '])
         .to_string();
     if value.is_empty() {
-        value = "Flow download".to_string();
+        value = "SaveTube download".to_string();
     }
     let reserved = [
         "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8",

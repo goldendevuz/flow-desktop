@@ -5,7 +5,7 @@ export const UA_CHROME =
 
 /** "Flow/<version>", the user agent the newer providers know Flow by, as on Android. */
 export async function flowUserAgent(): Promise<string> {
-  return `Flow/${(await getAppMetadata()).version}`;
+  return `SaveTube/${(await getAppMetadata()).version}`;
 }
 
 export function detectMs(value: number, durationSec: number): number {

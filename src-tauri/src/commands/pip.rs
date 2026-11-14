@@ -146,7 +146,7 @@ pub async fn open_pip_window<R: Runtime>(
 
     let mut builder =
         WebviewWindowBuilder::new(&app, PIP_WINDOW_LABEL, WebviewUrl::App("index.html".into()))
-            .title("Flow - Mini player")
+            .title("SaveTube - Mini player")
             .inner_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
             .min_inner_size(MIN_WIDTH, MIN_HEIGHT)
             .resizable(true)

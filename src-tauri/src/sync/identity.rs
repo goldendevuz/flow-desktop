@@ -14,7 +14,7 @@ pub fn new_device_id() -> String {
     uuid::Uuid::new_v4().to_string()
 }
 
-/// A friendly default device name, e.g. `"Flow Desktop (Windows)"`.
+/// A friendly default device name, e.g. `"SaveTube (Windows)"`.
 pub fn default_device_name() -> String {
     let os = match std::env::consts::OS {
         "windows" => "Windows",
@@ -22,7 +22,7 @@ pub fn default_device_name() -> String {
         "linux" => "Linux",
         other => other,
     };
-    format!("Flow Desktop ({os})")
+    format!("SaveTube ({os})")
 }
 
 // Tests for this module live in `tests/sync_phase1.rs` (integration test) — see the note in
