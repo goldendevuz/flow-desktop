@@ -192,6 +192,16 @@ impl Exclusions {
         self.min_subscribers
     }
 
+    /// The fewest views a video may have, when the viewer set one.
+    pub fn min_views(&self) -> Option<u64> {
+        self.min_views
+    }
+
+    /// Whether music videos are kept off Home.
+    pub fn hides_music_videos(&self) -> bool {
+        self.hide_music_videos
+    }
+
     /// The subscriber counts known so far, by channel id.
     pub fn channel_subscribers(&self) -> &HashMap<String, u64> {
         &self.channel_subscribers
