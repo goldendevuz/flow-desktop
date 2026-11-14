@@ -187,6 +187,9 @@ impl HomeFeedService {
             feed.max_video_age_ms = inputs.max_video_age_ms;
             feed.hides_seen = inputs.hides_seen_videos;
             feed.subscriptions_kept_off = !inputs.subscriptions_on_home;
+            feed.min_views = inputs.exclusions.min_views();
+            feed.min_subscribers = inputs.exclusions.min_subscribers();
+            feed.hide_music_videos = inputs.exclusions.hides_music_videos();
         }
         let ((searches, searches_failed), (related_seeds, related)) = tokio::join!(
             self.search_all(&yt, &wave1, now),

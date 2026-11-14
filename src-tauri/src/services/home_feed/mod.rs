@@ -85,6 +85,10 @@ struct Feed {
     hides_seen: bool,
     /// Whether this feed was built keeping followed channels off Home.
     subscriptions_kept_off: bool,
+    /// The minimum views, minimum subscribers and music choice this feed was built under.
+    min_views: Option<u64>,
+    min_subscribers: Option<u64>,
+    hide_music_videos: bool,
     subs_backlog: Vec<Card>,
     memory_quota: usize,
     related_picks: HashSet<String>,
@@ -176,6 +180,17 @@ impl HomeFeedService {
         let max_video_age_ms = inputs::max_video_age_ms(&pool).await;
         let hides_seen = inputs::hides_seen_videos(&pool).await;
         let subscriptions_kept_off = !inputs::subscriptions_on_home(&pool).await;
+        let min_views = inputs::min_views(&pool).await;
+        let min_subscribers = inputs::min_subscribers(&pool).await;
+        let hide_music_videos = inputs::hides_music_videos(&pool).await;
+        // Counts already read: a channel known to be too small is left out of the saved feed too.
+        let known_subscribers = if min_subscribers.is_some() {
+            crate::db::channel_subscribers::fresh(&pool, i64::try_from(now).unwrap_or(i64::MAX))
+                .await
+                .unwrap_or_default()
+        } else {
+            HashMap::new()
+        };
         let kept_off_home = if subscriptions_kept_off {
             inputs::subscriptions(&pool)
                 .await
@@ -198,12 +213,22 @@ impl HomeFeedService {
                 && !shorts.contains(card.id())
                 && !unplayable.contains(card.id())
                 && !kept_off_home.contains(card.channel_id())
+                && !min_views.is_some_and(|min| filters::is_below_min_views(&card.video, min))
+                && !min_subscribers.is_some_and(|min| {
+                    known_subscribers
+                        .get(card.channel_id())
+                        .is_some_and(|subscribers| *subscribers < min)
+                })
+                && !(hide_music_videos && music_video::looks_like_music_video(&card.video))
         };
         let choices_changed = {
             let feed = self.inner.feed.lock().unwrap();
             feed.max_video_age_ms != max_video_age_ms
                 || feed.hides_seen != hides_seen
                 || feed.subscriptions_kept_off != subscriptions_kept_off
+                || feed.min_views != min_views
+                || feed.min_subscribers != min_subscribers
+                || feed.hide_music_videos != hide_music_videos
         };
         if choices_changed {
             self.inner.chip_results.lock().unwrap().clear();
