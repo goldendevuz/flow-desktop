@@ -54,8 +54,8 @@ describe("importPlaylistFileWithToast", () => {
   });
 
   it.each([
-    ["a wrong file", file("{}"), "This file isn't a Flow playlist"],
-    ["a newer file", file({ format: "flow-playlist", version: 9, playlist: { name: "x" }, videos: [] }), "This playlist needs a newer version of Flow"],
+    ["a wrong file", file("{}"), "This file isn't a SaveTube playlist"],
+    ["a newer file", file({ format: "flow-playlist", version: 9, playlist: { name: "x" }, videos: [] }), "This playlist needs a newer version of SaveTube"],
     ["an empty one", playlistFile({ name: "x" }, []), "This playlist has no videos to import"],
   ])("explains %s", async (_label, input, message) => {
     await importPlaylistFileWithToast(input);
