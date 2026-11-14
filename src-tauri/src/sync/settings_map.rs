@@ -20,6 +20,8 @@ use crate::sync::mapping::iso_to_ms;
 enum Kind {
     Bool,
     Number,
+    /// A whole number, sent without a decimal point (Android reads it as a `Long`).
+    Whole,
     Text,
 }
 
@@ -87,6 +89,26 @@ const SHARED: &[Shared] = &[
     ),
     // The whole equalizer as Android's `EqStateJson`, carried as one JSON string.
     shared("equalizer", "eq_state_json", Kind::Text),
+    // What Home and Shorts show; both apps have these, so a choice made on one reaches the other.
+    shared(
+        "shorts_content_enabled",
+        "shorts_content_enabled",
+        Kind::Bool,
+    ),
+    shared("shorts_shelf_enabled", "shorts_shelf_enabled", Kind::Bool),
+    shared(
+        "home_shorts_shelf_enabled",
+        "home_shorts_shelf_enabled",
+        Kind::Bool,
+    ),
+    shared("home_min_views", "home_min_views", Kind::Whole),
+    shared("home_min_subscribers", "home_min_subscribers", Kind::Whole),
+    shared(
+        "home_hide_music_videos",
+        "home_hide_music_videos",
+        Kind::Bool,
+    ),
+    shared("home_pin_fresh_subs", "home_pin_fresh_subs", Kind::Bool),
 ];
 
 /// Player, content and extension preferences only the desktop has. Download paths, proxy
@@ -135,15 +157,12 @@ const DESKTOP_ONLY: &[&str] = &[
     "download_dialog_style",
     "home_feed_enabled",
     "show_app_logo_icon",
-    "shorts_content_enabled",
     "channel_shorts_tab_when_hidden",
     "hide_watched_home_feed",
     "hide_watched_subscriptions",
     "hide_watched_shorts",
     "watched_threshold",
     "subs_show_checked_video_count",
-    "shorts_shelf_enabled",
-    "home_shorts_shelf_enabled",
     "continue_watching_enabled",
     "home_subscriptions_enabled",
     "refresh_home_on_reselect",
@@ -358,6 +377,10 @@ fn typed(kind: Kind, stored: &str) -> Value {
             .ok()
             .and_then(serde_json::Number::from_f64)
             .map_or_else(|| Value::String(stored.to_string()), Value::Number),
+        Kind::Whole => stored.trim().parse::<i64>().map_or_else(
+            |_| Value::String(stored.to_string()),
+            |whole| Value::Number(whole.into()),
+        ),
         Kind::Text => Value::String(stored.to_string()),
     }
 }
@@ -366,6 +389,14 @@ fn typed(kind: Kind, stored: &str) -> Value {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn a_whole_number_setting_travels_without_a_decimal_point() {
+        assert_eq!(
+            to_wire("home_min_views", "1000000"),
+            Some(("home_min_views".to_string(), json!(1_000_000)))
+        );
+    }
 
     #[test]
     fn queue_autoplay_uses_androids_name_both_ways() {
