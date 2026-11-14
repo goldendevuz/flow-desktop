@@ -11,6 +11,31 @@ pub fn parse_count(text: &str) -> Option<u64> {
     }
 }
 
+/// The view count a card states: its number, or none for a card that says it has no views yet
+/// ("No views", "Ko'rishlar yo'q", "Нет просмотров"), which is zero rather than unknown.
+#[must_use]
+pub fn view_count_of(text: &str) -> Option<u64> {
+    let plain: String = text
+        .trim()
+        .to_lowercase()
+        .chars()
+        .map(|c| {
+            if matches!(c, '\u{2018}' | '\u{2019}' | '\u{02bb}' | '\u{02bc}' | '`') {
+                '\''
+            } else {
+                c
+            }
+        })
+        .collect();
+    if matches!(
+        plain.as_str(),
+        "no views" | "ko'rishlar yo'q" | "нет просмотров"
+    ) {
+        return Some(0);
+    }
+    parse_count(text)
+}
+
 /// CJK multipliers written straight after the number ("587万", "1.3億", "3천").
 const CJK_MULTIPLIERS: [(char, f64); 7] = [
     ('千', 1e3),
@@ -182,6 +207,22 @@ mod tests {
         assert_eq!(localized_count("1,2 mln marta"), Some(1_200_000));
         assert_eq!(localized_count("12 mlrd"), Some(12_000_000_000));
         assert_eq!(localized_count("84 marta"), Some(84));
+    }
+
+    #[test]
+    fn no_views_is_zero_not_unknown() {
+        assert_eq!(view_count_of("No views"), Some(0));
+        assert_eq!(view_count_of(" no views "), Some(0));
+        assert_eq!(view_count_of("Ko\u{2018}rishlar yo\u{2018}q"), Some(0));
+        assert_eq!(view_count_of("Ko'rishlar yo'q"), Some(0));
+        assert_eq!(view_count_of("Нет просмотров"), Some(0));
+        assert_eq!(view_count_of("1,234 views"), Some(1_234));
+        assert_eq!(view_count_of("Premieres soon"), None);
+        assert_eq!(
+            parse_count("No views"),
+            None,
+            "the general reader still leaves it unknown"
+        );
     }
 
     #[test]

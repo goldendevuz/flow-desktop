@@ -6,7 +6,7 @@ use serde_json::Value;
 
 use super::collaborators::collaborators_in;
 use crate::api::innertube::json::age::relative_age;
-use crate::api::innertube::json::count::parse_count;
+use crate::api::innertube::json::count::{parse_count, view_count_of};
 use crate::api::innertube::json::duration::parse_duration;
 use crate::api::innertube::json::text::{browse_id_in_runs, text_of};
 use crate::api::innertube::json::thumbnail::{
@@ -70,7 +70,7 @@ pub fn video_from_renderer(video: &Value) -> Option<VideoSummary> {
             duration_seconds: duration_of(video),
             published_text: text_of(&video["publishedTimeText"]).or(info_published),
             view_count: (!is_upcoming)
-                .then(|| view_count_text.as_deref().and_then(parse_count))
+                .then(|| view_count_text.as_deref().and_then(view_count_of))
                 .flatten(),
             view_count_text,
             channel_avatar_url:

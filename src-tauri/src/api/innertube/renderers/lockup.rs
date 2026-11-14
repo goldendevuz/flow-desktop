@@ -7,7 +7,7 @@ use serde_json::Value;
 
 use super::collaborators::collaborators_in;
 use crate::api::innertube::json::age::relative_age;
-use crate::api::innertube::json::count::parse_count;
+use crate::api::innertube::json::count::{parse_count, view_count_of};
 use crate::api::innertube::json::duration::parse_duration;
 use crate::api::innertube::json::thumbnail::{
     largest_url, normalize_youtube_image_url, thumbnail_url_from_array,
@@ -319,7 +319,7 @@ pub fn lockup_item(lockup: &Value) -> Option<RelatedContentItem> {
 #[must_use]
 pub fn related_to_video(item: RelatedContentItem) -> VideoSummary {
     let view_count = (!item.is_upcoming)
-        .then(|| item.view_count_text.as_deref().and_then(parse_count))
+        .then(|| item.view_count_text.as_deref().and_then(view_count_of))
         .flatten();
     VideoSummary {
         id: item.video_id.unwrap_or(item.id),
